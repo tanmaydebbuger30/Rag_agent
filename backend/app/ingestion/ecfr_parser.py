@@ -1,3 +1,4 @@
+# Electronic Code of Federal Regulations.
 import re
 import xml.etree.ElementTree as ET
 from pathlib import Path
@@ -32,12 +33,51 @@ def paragraph_parts(p):
 
     return markers, title, body
 
+ROMAN_RE = re.compile(r"^[ivxl]+$")   # i, ii, iii, iv, v, ... x, xi ...
+
+def marker_level(marker, stack):
+    """ return the outline level of a marker: 1= a, 2 = 1, 3 = i, 4 = A"""
+    if marker.isdigit():
+        return 2
+
+    elif marker != marker.lower():
+        return 4
+
+    elif ROMAN_RE.match(marker) and len(stack) in (2,3):
+        return 3
+    
+    else:
+        return 1
+    
+# print(marker_level("a", []))             # expect 1
+# print(marker_level("1", ["a"]))          # expect 2
+# print(marker_level("i", ["a", "2"]))     # expect 3
+# print(marker_level("i", []))             # expectx 1
+# print(marker_level("A", ["a","2","i"]))  # expect 4
+# print(marker_level("b", ["a","2","iv"])) # expect 1  ← the bug-2 case
 
 def main():
     root = ET.parse(XML_PATH).getroot()
-    section = find_section(root, "164.312")
+    section_number = "164.312"
+    section = find_section(root, section_number)
+
+    stack = []
+    
     for p in section.findall("P"):
-        print(paragraph_parts(p))
+        markers, title, body = paragraph_parts(p)
+
+        if not markers:
+            continue
+        for marker in markers:
+            level = marker_level(marker,stack)
+            stack = stack[:level -1]
+            stack.append(marker)
+        
+        full_id = section_number + "".join(f"({m})" for m in stack)
+        print(f"{full_id:<22} {title}")
+    
+
+
 
 if __name__ == "__main__":
     main()
