@@ -56,6 +56,43 @@ def marker_level(marker, stack):
 # print(marker_level("A", ["a","2","i"]))  # expect 4
 # print(marker_level("b", ["a","2","iv"])) # expect 1  ← the bug-2 case
 
+
+def parse_title(title):
+    """Turn a raw italic title into (control_name, level, requiement_type)"""
+
+    name = title.strip()
+
+    if name.startswith("Standard:"):
+        level = "standard"
+    else:
+        level = "implementation_specification"
+
+    
+    if "Required" in name:
+        requirement_type = "required"
+    
+    elif "Addressable" in name:
+        requirement_type = "addressable"
+
+    else:
+        requirement_type = "required"
+
+    name = name.replace("Standard:", "")
+    name = name.replace("Implementation specification:", "")
+    name = name.replace("(Required)", "")
+    name = name.replace("(Addressable)", "")
+    name = name.rstrip(".")
+    name = name.strip()
+    name = name.title()
+
+   
+
+    return name, level, requirement_type
+
+
+
+            
+
 def main():
     root = ET.parse(XML_PATH).getroot()
     section_number = "164.312"
@@ -74,7 +111,12 @@ def main():
             stack.append(marker)
         
         full_id = section_number + "".join(f"({m})" for m in stack)
-        print(f"{full_id:<22} {title}")
+        if not body and title.endswith(":"):
+            continue                          # heading, e.g. "Implementation specifications:"
+
+        name, level, req_type = parse_title(title)
+        print(f"{full_id:<22} {level:<30} {req_type:<12} {name}")
+       
     
 
 
