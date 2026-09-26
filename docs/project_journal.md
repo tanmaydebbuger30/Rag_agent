@@ -4,9 +4,9 @@ A running record of what has been built, why, and what was learned along the
 way. It is written to be re-read before an interview: every decision here is
 one you should be able to explain out loud.
 
-> Status as of this entry: **Phase 1, Step 2e** — the HIPAA Access Control
-> control catalog (`controls.yaml`) is generated and reviewed; automated tests
-> are the next task. No AI model, embeddings or retrieval have been built yet.
+> Status as of this entry: **Phase 1, Step 2 complete** — the HIPAA Access
+> Control catalog (`controls.yaml`) is generated, reviewed and covered by 4
+> passing `pytest` tests. Next: Step 3, parsing and chunking the guidance PDFs. No AI model, embeddings or retrieval have been built yet.
 > No performance metrics exist yet, so none are claimed.
 
 ---
@@ -68,8 +68,8 @@ is found with retrieval (RAG).
 | 2c | Extract name, level, requirement type from titles | ✅ |
 | 2d | Validated `Control` objects (Pydantic) | ✅ |
 | 2e | Write `controls.yaml`, human review | ✅ |
-| 2e | Automated tests (`pytest`) | ⏳ next |
-| 3 | Parse + chunk guidance PDFs (HHS, NIST) | ⬜ |
+| 2e | Automated tests (`pytest`, 4 passing) | ✅ |
+| 3 | Parse + chunk guidance PDFs (HHS, NIST) | ⏳ next |
 | 4 | Tag guidance chunks with control IDs | ⬜ |
 | 5 | Embeddings + Qdrant vector store | ⬜ |
 | 6 | Gold evaluation dataset (you review labels) | ⬜ |
@@ -202,6 +202,25 @@ Rules for this file:
 - The commit that adds it is the **human review sign-off**.
 - Run with `python -m backend.app.ingestion.ecfr_parser`.
 
+### Step 2e — Tests (`backend/tests/test_ecfr_parser.py`)
+
+A test is a question with a known answer: `assert <must be true>`. If it's
+false, pytest fails and shows both values. `pytest` runs every function whose
+name starts with `test_`.
+
+| Test | What it guards |
+|---|---|
+| `test_marker_level_roman_vs_letter` | roman `i` vs letter `i`, plus the `and`/`or` regression case |
+| `test_exactly_five_in_scope_controls` | exactly the 5 right IDs, in order (a count alone would miss wrong IDs) |
+| `test_requirements_types` | required vs addressable per control, including "standards are required" |
+| `test_requirement_text_is_verbatim` | the legal text matches the regulation exactly (`==`, not "contains") |
+
+The tests import `CONTROLS_PATH` from the parser instead of retyping it, so the
+path lives in one place (single source of truth). Each test was broken once on
+purpose to prove it can fail.
+
+Run with `python -m pytest backend/tests -v`.
+
 ---
 
 ## 5. Key concepts (glossary)
@@ -285,6 +304,11 @@ must tell them apart, and the evaluation will measure that.
 | `git push` 403 as another account | cached credentials | `gh auth login` as the right account, then `gh auth setup-git` |
 | Pasted `# comment` broke git | zsh doesn't treat `#` as a comment | Don't paste inline comments into the shell |
 | `schemas/` missing after clone | git doesn't store empty folders | `__init__.py` files keep package folders tracked |
+| `marker_level("i", ["a","2"] == 3)` in a test | `len(False)` crash | Close the function call first, then compare |
+| Test dict mapped ID → whole control | would always fail | Compare like with like: ID → one field |
+| Test built values but had no `assert` | passes no matter what | A test with no assert protects nothing |
+| Test redefined `CONTROLS_PATH` as `data/framework/...` | `FileNotFoundError` | Import shared constants; the later definition wins |
+| `ENOSPC: no space left on device` | editor couldn't save; only 104 MB free | Check `df -h ~`; caches (`~/Library/Caches`) are safe to clear; keep 15+ GB free for models and Docker |
 
 **Debugging techniques used:** read tracebacks bottom-up; `print(repr(x))`
 after each transformation step; test a function alone before wiring it in;
