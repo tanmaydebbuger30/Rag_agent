@@ -83,7 +83,12 @@ def parse_title(title):
     name = name.replace("(Addressable)", "")
     name = name.rstrip(".")
     name = name.strip()
-    name = name.title()
+    SMALL_WORDS = {"and", "or", "to", "of", "the", "a", "an", "in", "for"}
+    words = name.title().split()
+    name = " ".join(
+        w.lower() if i > 0 and w.lower() in SMALL_WORDS else w
+        for i, w in enumerate(words)
+    )
 
    
 
