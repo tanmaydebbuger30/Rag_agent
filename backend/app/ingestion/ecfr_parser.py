@@ -2,6 +2,7 @@
 import re
 import xml.etree.ElementTree as ET
 from pathlib import Path
+from backend.app.schemas.regulatory import Control
 
 XML_PATH = Path("data/raw/regulatory/ecfr_45_164_subpartC.xml")
 
@@ -19,7 +20,7 @@ def find_section(root,section_number):
 def paragraph_parts(p):
 
     """
-    split one <P> intpo (markerts, italic_title, body_text)
+    split one <P> into (markerts, italic_title, body_text)
     """
 
     full_text = "".join(p.itertext()).strip()
@@ -48,13 +49,6 @@ def marker_level(marker, stack):
     
     else:
         return 1
-    
-# print(marker_level("a", []))             # expect 1
-# print(marker_level("1", ["a"]))          # expect 2
-# print(marker_level("i", ["a", "2"]))     # expect 3
-# print(marker_level("i", []))             # expectx 1
-# print(marker_level("A", ["a","2","i"]))  # expect 4
-# print(marker_level("b", ["a","2","iv"])) # expect 1  ← the bug-2 case
 
 
 def parse_title(title):
@@ -68,10 +62,10 @@ def parse_title(title):
         level = "implementation_specification"
 
     
-    if "Required" in name:
+    if "(Required)" in name:
         requirement_type = "required"
     
-    elif "Addressable" in name:
+    elif "(Addressable)" in name:
         requirement_type = "addressable"
 
     else:
@@ -104,6 +98,10 @@ def main():
     section = find_section(root, section_number)
 
     stack = []
+    controls = []               # all Control objects end up here
+    current_standard = None     # the most recent standard we saw
+    IN_SCOPE_V1 = {"164.312(a)(1)"} # the standard we assess in v1
+
     
     for p in section.findall("P"):
         markers, title, body = paragraph_parts(p)
@@ -111,8 +109,8 @@ def main():
         if not markers:
             continue
         for marker in markers:
-            level = marker_level(marker,stack)
-            stack = stack[:level -1]
+            depth = marker_level(marker,stack)
+            stack = stack[:depth -1]
             stack.append(marker)
         
         full_id = section_number + "".join(f"({m})" for m in stack)
@@ -120,9 +118,34 @@ def main():
             continue                          # heading, e.g. "Implementation specifications:"
 
         name, level, req_type = parse_title(title)
-        print(f"{full_id:<22} {level:<30} {req_type:<12} {name}")
-       
-    
+        
+        if level == "standard":
+            parent_id = None
+            current_standard = full_id 
+        else:
+            parent_id = current_standard
+
+
+        in_scope = (full_id in IN_SCOPE_V1) or (parent_id in IN_SCOPE_V1)
+
+        control = Control(
+            framework="HIPAA",
+            section=section_number,
+            control_id=full_id,
+            parent_id=parent_id,
+            control_name=name,
+            level=level,
+            requirement_type=req_type,
+            safeguard_category="Technical",
+            requirement_text=body,
+            citation=f"45 CFR § {full_id}",
+            in_scope_v1=in_scope,
+        )
+        controls.append(control)
+
+    for c in controls:
+        if c.in_scope_v1:
+            print(c.model_dump())
 
 
 
