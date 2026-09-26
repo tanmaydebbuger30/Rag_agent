@@ -1,10 +1,12 @@
 # Electronic Code of Federal Regulations.
+import yaml
 import re
 import xml.etree.ElementTree as ET
 from pathlib import Path
 from backend.app.schemas.regulatory import Control
 
 XML_PATH = Path("data/raw/regulatory/ecfr_45_164_subpartC.xml")
+CONTROLS_PATH = Path("data/frameworks/hipaa_security_rule/controls.yaml")
 
 MARKERS_RE = re.compile(r"^((?:\([A-Za-z0-9]+\))+)\s*") # matches "(a)(1) or "i" at the start
 
@@ -20,7 +22,7 @@ def find_section(root,section_number):
 def paragraph_parts(p):
 
     """
-    split one <P> into (markerts, italic_title, body_text)
+    split one <P> into (markers, italic_title, body_text)
     """
 
     full_text = "".join(p.itertext()).strip()
@@ -52,7 +54,7 @@ def marker_level(marker, stack):
 
 
 def parse_title(title):
-    """Turn a raw italic title into (control_name, level, requiement_type)"""
+    """Turn a raw italic title into (control_name, level, requirement_type)"""
 
     name = title.strip()
 
@@ -143,10 +145,12 @@ def main():
         )
         controls.append(control)
 
-    for c in controls:
-        if c.in_scope_v1:
-            print(c.model_dump())
+    in_scope_controls = [c.model_dump() for c in controls if c.in_scope_v1]
 
+    CONTROLS_PATH.parent.mkdir(parents=True, exist_ok=True)
+    with CONTROLS_PATH.open("w", encoding="Utf-8") as f:
+        yaml.safe_dump(in_scope_controls, f, sort_keys=False, allow_unicode=True)
+    print(f"Wrote {len(in_scope_controls)} controls to {CONTROLS_PATH}")
 
 
 if __name__ == "__main__":
