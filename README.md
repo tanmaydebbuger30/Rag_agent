@@ -26,5 +26,7 @@ FastAPI · LangGraph · Qdrant · PostgreSQL · Langfuse · Next.js · Docker
 | 8 | Frontend | Not started |
 | 9 | Containerized deployment | Not started |
 
+Learning log and interview notes: [docs/project_journal.md](docs/project_journal.md)
+
 All reported metrics will come from the evaluation runner in this repo; none are
 estimated or synthetic.
