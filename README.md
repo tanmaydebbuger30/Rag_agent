@@ -6,6 +6,10 @@ HIPAA Security Rule, quotes the evidence behind every finding, verifies those
 quotes, routes uncertain findings to a human reviewer, and suggests remediation.
 It does **not** make legal determinations of compliance.
 
+**Live demo:** https://complianceguard-ai-l4aq.onrender.com (free instance: the
+first load after a quiet period can take up to a minute). Click *New assessment*
+and run the fictional sample clinic.
+
 **V1 scope:** HIPAA Security Rule, Access Control, 45 CFR § 164.312(a): the
 standard and its four implementation specifications (unique user
 identification, emergency access procedure, automatic logoff, encryption and
@@ -110,24 +114,16 @@ With Docker:
 docker compose up --build        # http://localhost:8000
 ```
 
-### Deploy for free on Hugging Face Spaces
+### Deploy for free on Render
 
-The workflow `.github/workflows/deploy-hf-space.yml` uploads the app to a
-Docker Space on every push to `main` (`deploy/huggingface/sync_space.py`
-stages only what the image needs; the guidance PDFs are not uploaded because
-the prebuilt `data/processed/regulatory_chunks.jsonl` is used).
+The live demo runs on Render's free plan from `render.yaml` (one Docker web
+service, health check `/api/health`, auto-deploy on every push to `main`). To
+deploy your own copy: Render → New → Blueprint → select this repository → Apply.
 
-1. On huggingface.co, create a **write** access token (Settings → Access Tokens).
-2. In this GitHub repo: Settings → Secrets and variables → Actions:
-   - secret `HF_TOKEN` = the token
-   - variable `HF_SPACE` = `<your-hf-username>/complianceguard-ai`
-3. Push to `main`, or run the workflow from the Actions tab. The Space is
-   created if it doesn't exist and builds from the Dockerfile.
-
-Manual alternative: `HF_TOKEN=hf_... python deploy/huggingface/sync_space.py <user>/complianceguard-ai`.
-Free Spaces sleep after a period without visitors, and assessments are lost
-when the Space restarts. Don't add an `ANTHROPIC_API_KEY` to a public Space:
-there is no login, so anyone could spend it.
+Free instances sleep after about 15 minutes without traffic (the first request
+then takes up to a minute), and assessments are lost on every restart or
+redeploy. Don't add an `ANTHROPIC_API_KEY` to a public deployment: there is no
+login, so anyone could spend it.
 
 Optional settings (environment variables):
 

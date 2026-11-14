@@ -81,6 +81,7 @@ is found with retrieval (RAG).
 | 10 | Human review (accept / override), Markdown report, SQLite persistence | ✅ |
 | 11 | FastAPI backend + React frontend | ✅ |
 | 12 | Docker image | ✅ built and smoke-tested |
+| 13 | Free deployment on Render (`render.yaml`): https://complianceguard-ai-l4aq.onrender.com | ✅ live (Hugging Face Docker Spaces now need a paid PRO plan, so we switched) |
 | - | Langfuse tracing | ⬜ not done (a per-node trace is stored with each assessment instead) |
 
 ---
