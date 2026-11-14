@@ -1,0 +1,23 @@
+name: Deploy to Hugging Face Space
+
+# Runs on every push to main, or by hand from the Actions tab.
+# Needs: repository secret HF_TOKEN (a Hugging Face token with write access)
+#        repository variable HF_SPACE, e.g. "your-hf-username/complianceguard-ai"
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: ${{ vars.HF_SPACE != '' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install "huggingface_hub>=1.0"
+      - run: python deploy/huggingface/sync_space.py "${{ vars.HF_SPACE }}"
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}

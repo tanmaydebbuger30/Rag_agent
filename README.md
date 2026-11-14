@@ -110,6 +110,25 @@ With Docker:
 docker compose up --build        # http://localhost:8000
 ```
 
+### Deploy for free on Hugging Face Spaces
+
+The workflow `.github/workflows/deploy-hf-space.yml` uploads the app to a
+Docker Space on every push to `main` (`deploy/huggingface/sync_space.py`
+stages only what the image needs; the guidance PDFs are not uploaded because
+the prebuilt `data/processed/regulatory_chunks.jsonl` is used).
+
+1. On huggingface.co, create a **write** access token (Settings → Access Tokens).
+2. In this GitHub repo: Settings → Secrets and variables → Actions:
+   - secret `HF_TOKEN` = the token
+   - variable `HF_SPACE` = `<your-hf-username>/complianceguard-ai`
+3. Push to `main`, or run the workflow from the Actions tab. The Space is
+   created if it doesn't exist and builds from the Dockerfile.
+
+Manual alternative: `HF_TOKEN=hf_... python deploy/huggingface/sync_space.py <user>/complianceguard-ai`.
+Free Spaces sleep after a period without visitors, and assessments are lost
+when the Space restarts. Don't add an `ANTHROPIC_API_KEY` to a public Space:
+there is no login, so anyone could spend it.
+
 Optional settings (environment variables):
 
 | Variable | Default | Effect |
