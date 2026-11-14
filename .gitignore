@@ -6,3 +6,4 @@ node_modules/
 frontend/dist/
 *.sqlite3
 .pytest_cache/
+.DS_Store
