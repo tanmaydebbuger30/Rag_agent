@@ -19,4 +19,5 @@ RUN useradd --create-home app && mkdir -p /data && chown app /data
 USER app
 VOLUME /data
 EXPOSE 8000
-CMD ["uvicorn", "backend.app.api.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Hosts such as Render tell the app which port to use through $PORT.
+CMD ["sh", "-c", "uvicorn backend.app.api.main:app --host 0.0.0.0 --port ${PORT:-8000}"]
