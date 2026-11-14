@@ -1,0 +1,131 @@
+# Assessment criteria for the five in-scope Access Control controls.
+#
+# Status: DRAFT written for this portfolio project. The criteria paraphrase the
+# HHS Security Series #4 and NIST SP 800-66r2 guidance chunks listed under
+# `sources`; they are NOT an official HHS checklist and must be reviewed by a
+# person before being relied on.
+#
+# Per control:
+#   aliases        practitioner vocabulary appended to retrieval queries
+#   criteria       what evidence should show; each has regex `patterns`
+#                  (case-insensitive, any one match satisfies the criterion)
+#                  and a remediation suggestion used when it is missing
+#   contradictions patterns that indicate the control is NOT met
+#   alternative    (addressable only) patterns showing a documented decision
+#                  that the specification is not reasonable and appropriate,
+#                  with an equivalent measure (45 CFR 164.306(d)(3))
+
+"164.312(a)(1)":
+  aliases: [access control policy, role-based access, RBAC, least privilege, minimum necessary,
+            access provisioning, deprovisioning, access review, user access management]
+  criteria:
+    - id: ac-1
+      text: Access to ePHI systems is limited to authorized users based on role or job function
+      patterns: ['role[- ]based access', '\bRBAC\b', 'least privilege', 'minimum necessary',
+                 'based on (their |the user.s )?(job|role)', 'authorized (users|personnel|workforce)']
+      remediation: Document an access control policy that limits ePHI access to authorized users based on role (least privilege / minimum necessary).
+      sources: [hhs-ts-04, nist-5.3.1-01]
+    - id: ac-2
+      text: A defined process for requesting, approving and granting access
+      patterns: ['access (request|requests|provisioning)', '(approve|approval|approved).{0,40}access',
+                 'access.{0,40}(approve|approval|approved)', 'provision(ed|ing)? (user )?access']
+      remediation: Define an access request and approval workflow (who approves, how access is granted and recorded).
+      sources: [nist-5.3.1-04, nist-5.3.1-05]
+    - id: ac-3
+      text: Access is periodically reviewed and removed when no longer needed
+      patterns: ['access (reviews?|recertification|re-certification)', 'review(ed)? (user )?access',
+                 '(revoke|revoked|remove|removed|disable|disabled|terminat\w+).{0,50}(access|accounts?)',
+                 'deprovision']
+      remediation: Schedule periodic user access reviews and a termination checklist that revokes access when it is no longer required.
+      sources: [nist-5.3.1-06, nist-5.3.1-09]
+  contradictions: []
+
+"164.312(a)(2)(i)":
+  aliases: [unique user ID, individual login, named account, user account, no shared accounts,
+            generic account, shared login, user identifier]
+  criteria:
+    - id: uid-1
+      text: Every user is assigned a unique user ID / individual account
+      patterns: ['unique (user )?(id|identifier|identification|username|user ?name|login|account)',
+                 'individual (user )?(account|login|credentials)', 'own (user )?(account|login|credentials)']
+      remediation: Require that every workforce member is assigned a unique user ID before accessing systems with ePHI.
+      sources: [hhs-ts-05, nist-5.3.1-03]
+    - id: uid-2
+      text: Shared or generic accounts are prohibited (or tightly controlled)
+      patterns: ['(shared|generic|group) (user )?(accounts?|logins?|credentials|ids?).{0,60}(prohibited|not (be )?(permitted|allowed)|forbidden|disabled)',
+                 '(prohibit\w*|not (be )?(permitted|allowed)|must not|never).{0,60}(shar\w+).{0,30}(accounts?|logins?|credentials|passwords?)']
+      remediation: Prohibit shared and generic accounts for ePHI systems, or document compensating controls for any exception.
+      sources: [hhs-ts-05]
+    - id: uid-3
+      text: System activity can be traced to the individual user
+      patterns: ['(trace|traced|traceable|attribut\w+).{0,40}(user|individual)', 'audit (log|trail)s?',
+                 'activity (is |are )?logged']
+      remediation: Ensure system logs record the unique user ID for access to ePHI so activity can be traced to an individual.
+      sources: [nist-5.3.1-03]
+  contradictions: ['(shared|generic|common) (logins?|accounts?|credentials|passwords?) (are|is) (used|permitted|allowed)',
+                   'staff share (a |the )?(login|account|password)']
+
+"164.312(a)(2)(ii)":
+  aliases: [break-glass, break glass, emergency access account, emergency override, disaster access,
+            downtime procedure, emergency mode]
+  criteria:
+    - id: ea-1
+      text: A documented emergency (break-glass) access procedure exists
+      patterns: ['break[- ]glass', 'emergency access (procedure|account|process|policy)',
+                 'emergency (mode )?(operations? )?(procedure|access)']
+      remediation: Document an emergency (break-glass) access procedure for obtaining necessary ePHI during an emergency.
+      sources: [hhs-ts-06, nist-5.3.1-07]
+    - id: ea-2
+      text: It defines who may invoke emergency access and how it is obtained
+      patterns: ['(authorized|designated|permitted) (to|personnel|staff|individuals?).{0,60}emergency',
+                 'emergency.{0,80}(authorized|designated|approved) (by|personnel|staff|individuals?)',
+                 '(sealed|stored|kept).{0,40}(envelope|safe|vault|password manager)',
+                 '(only|authorized|designated).{0,40}(authorized|permitted|allowed) to (enable|use|invoke|activate|grant)']
+      remediation: State who is authorized to invoke emergency access and the exact steps to obtain it.
+      sources: [hhs-ts-06, nist-5.3.1-07]
+    - id: ea-3
+      text: Emergency access use is logged and reviewed afterward
+      patterns: ['emergency.{0,120}(logged|reviewed|audited|monitored)', '(post-incident|after[- ]action|retrospective) review',
+                 'break[- ]glass.{0,120}(logged|reviewed|audited|alert)']
+      remediation: Log every use of emergency access and require a review of each use after the emergency ends.
+      sources: [nist-5.3.1-07]
+  contradictions: []
+
+"164.312(a)(2)(iii)":
+  aliases: [session timeout, idle timeout, screen lock, inactivity timeout, auto logout,
+            automatic lock, idle session lock, screensaver password]
+  criteria:
+    - id: lo-1
+      text: Sessions terminate or lock automatically after a defined period of inactivity
+      patterns: ['(automatic(ally)?|auto)[- ]?(log ?off|log ?out|lock)', '(session|idle|inactivity) (time ?out|lock)',
+                 'screen ?(saver|lock).{0,40}(password|lock)', '(lock|log(ged)? ?(off|out)|terminat\w+).{0,40}after.{0,30}(inactiv|idle)']
+      remediation: Configure automatic logoff or screen lock on systems that access ePHI.
+      sources: [hhs-ts-07, nist-5.3.1-08]
+    - id: lo-2
+      text: The inactivity period is specified
+      patterns: ['\b\d{1,3}\s*(-\s*)?(minutes?|mins?)\b.{0,60}(inactiv|idle|timeout|lock|log ?off)',
+                 '(inactiv|idle|timeout|lock|log ?off).{0,60}\b\d{1,3}\s*(-\s*)?(minutes?|mins?)\b']
+      remediation: Specify the inactivity period (for example 15 minutes) based on the risk assessment.
+      sources: [nist-5.3.1-08]
+  contradictions: ['(automatic logoff|auto[- ]?lock|screen lock|session timeout).{0,40}(is|are) (not (enabled|configured|used|in place)|disabled|turned off)']
+  alternative: ['automatic logoff.{0,200}not (reasonable|appropriate)', 'not reasonable and appropriate.{0,200}(logoff|log ?out|timeout)']
+
+"164.312(a)(2)(iv)":
+  aliases: [encryption at rest, disk encryption, full-disk encryption, BitLocker, FileVault, AES-256,
+            database encryption, encrypted laptop, key management]
+  criteria:
+    - id: enc-1
+      text: ePHI stored on systems and devices is encrypted at rest
+      patterns: ['encrypt\w*.{0,60}(at rest|stored|storage|disk|drive|laptop|database|device|backup)',
+                 '(full[- ]disk|disk|drive|database|device) encryption', '\bAES[- ]?(128|256)\b', 'bitlocker|filevault',
+                 '(laptops?|drives?|disks?|databases?|devices?|backups?|servers?) (are|is) encrypted']
+      remediation: Encrypt ePHI at rest on servers, databases, laptops and backups (for example AES-256 full-disk encryption).
+      sources: [hhs-ts-08, nist-5.3.1-08]
+    - id: enc-2
+      text: Encryption keys are managed (generation, storage, rotation, access)
+      patterns: ['key management', '(encryption |recovery )?keys? (are |is )?(stored|managed|rotated|escrowed)',
+                 '(kms|key vault|hsm)\b', 'key rotation']
+      remediation: Document how encryption keys are generated, stored, rotated and who can access them.
+      sources: [hhs-ts-08]
+  contradictions: ['(laptops?|devices?|databases?|backups?|drives?).{0,40}(are|is) not encrypted', 'unencrypted (laptops?|devices?|databases?|backups?)']
+  alternative: ['encryption.{0,200}not (reasonable|appropriate)', 'not reasonable and appropriate.{0,200}encrypt']

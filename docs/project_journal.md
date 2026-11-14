@@ -4,10 +4,12 @@ A running record of what has been built, why, and what was learned along the
 way. It is written to be re-read before an interview: every decision here is
 one you should be able to explain out loud.
 
-> Status as of this entry: **Phase 1, Step 2 complete** — the HIPAA Access
-> Control catalog (`controls.yaml`) is generated, reviewed and covered by 4
-> passing `pytest` tests. Next: Step 3, parsing and chunking the guidance PDFs. No AI model, embeddings or retrieval have been built yet.
-> No performance metrics exist yet, so none are claimed.
+> Status as of this entry (Nov 2026): **V1 end to end** — ingestion of the
+> regulation, HHS and NIST guidance; hybrid retrieval with an evaluation
+> runner; a LangGraph gap-analysis workflow with citation verification and
+> human review; FastAPI + React UI; Docker image. 37 tests pass. The only
+> metrics claimed are in `eval_results/latest.md`, on draft labels that still
+> need your review (see Steps 6–7).
 
 ---
 
@@ -69,13 +71,17 @@ is found with retrieval (RAG).
 | 2d | Validated `Control` objects (Pydantic) | ✅ |
 | 2e | Write `controls.yaml`, human review | ✅ |
 | 2e | Automated tests (`pytest`, 4 passing) | ✅ |
-| 3 | Parse + chunk guidance PDFs (HHS, NIST) | ⏳ next |
-| 4 | Tag guidance chunks with control IDs | ⬜ |
-| 5 | Embeddings + Qdrant vector store | ⬜ |
-| 6 | Gold evaluation dataset (you review labels) | ⬜ |
-| 7 | Retrieval metrics + eval runner | ⬜ |
-| 8 | Hybrid search (dense + BM25 + RRF), ablations | ⬜ |
-| 9 | Langfuse tracing on retrieval | ⬜ |
+| 3 | Parse + chunk guidance PDFs (HHS, NIST) | ✅ |
+| 4 | Tag guidance chunks with control IDs | ✅ |
+| 5 | Retrieval: BM25 + identifier pass + alias map + RRF; optional dense embeddings | ✅ (dense untested here: no model download) |
+| 6 | Draft gold evaluation datasets (retrieval + assessment) | ✅ drafted, **your review pending** |
+| 7 | Retrieval metrics + eval runner with ablations | ✅ |
+| 8 | Evidence ingestion (uploads) | ✅ |
+| 9 | Gap-analysis workflow (LangGraph): rules assessor, optional Claude assessor, citation verification, review routing | ✅ |
+| 10 | Human review (accept / override), Markdown report, SQLite persistence | ✅ |
+| 11 | FastAPI backend + React frontend | ✅ |
+| 12 | Docker image | ✅ built and smoke-tested |
+| - | Langfuse tracing | ⬜ not done (a per-node trace is stored with each assessment instead) |
 
 ---
 
@@ -221,6 +227,101 @@ purpose to prove it can fail.
 
 Run with `python -m pytest backend/tests -v`.
 
+### Steps 3–12: the end-to-end build (written by Claude, Nov 2026)
+
+> Honesty note for interviews: you wrote Steps 0–3c yourself (eCFR parser,
+> catalog, tests, `pdf_explore.build_sections`). Steps 3d onward were written by
+> Claude when you asked for the project to be completed end to end. Before you
+> present any of it as your work, read each file, run it, and be able to answer
+> the questions in Section 8b. If you can't explain a part, describe it as
+> "the project includes…" rather than "I built…".
+
+**3d. HHS chunks** (`ingestion/hhs_chunks.py`). One chunk per heading section
+from `build_sections`. SPEC headings link to a control by the `§ 164.312(...)`
+citation; 16pt headings link by exact standard name. We also fixed
+`build_sections` to drop sidebar NOTE boxes and footers: they are set in Arial
+at the right margin (x ≥ 340) or at 10pt, while the body is Times New Roman.
+Result: 18 chunks, 5 in scope.
+
+**3e. NIST chunks** (`ingestion/nist_chunks.py`). NIST SP 800-66r2 §5.3 is
+tables of "Key Activity | Description | Sample Questions". One chunk per table
+row (`page.find_tables()`). A row whose first cell is not numbered continues
+the previous row across a page break, so it is merged. Footnote numbers glued
+to words ("Users103") are stripped with a regex that leaves citations like
+`§ 164.308(a)(4)` intact. The standard each row belongs to comes from the PDF
+outline (`get_toc()`). Result: 27 chunks, 9 under Access Control.
+
+**4. Control tagging.** eCFR: exact. HHS: citation, then name. NIST: outline
+section, then implementation-spec names in the key activity
+(row 8 "Automatic Logoff and Encryption and Decryption" → both specs).
+
+**5. Retrieval** (`retrieval/`). 57 chunks total (12 eCFR + 18 HHS + 27 NIST).
+- BM25 written from scratch (`bm25.py`); CFR citations are single tokens.
+- Identifier pass: a citation in the query ranks that control's chunks as an
+  extra list. Alias map: practitioner words ("break-glass") do the same.
+- Reciprocal Rank Fusion (k = 60) combines the lists by rank.
+- Controls are ranked by their **best** chunk. Summing was tried first and
+  over-ranked Access Control (a)(1), which simply has the most chunks.
+- Dense embeddings are behind an `Embedder` interface with exact cosine
+  search in numpy. Off by default (`CG_DENSE=1`), because the model must be
+  downloaded and this cloud container blocks Hugging Face. The code path is
+  unit-tested with a fake embedder; real embedding quality is **unmeasured**.
+- Deviation from the design doc: no Qdrant. At 57 chunks, exact search is
+  simpler and has no extra service; the `Embedder`/index interface keeps a
+  vector DB swap possible.
+
+**6–7. Evaluation** (`evaluation/run_eval.py`, `data/eval/`, `eval_results/latest.md`).
+Two draft datasets: 38 retrieval queries (citation, verbatim, paraphrase,
+jargon, hard negative, out of scope; dev/test split) and 18 assessment cases.
+Labels are `draft_unreviewed`: written by the same author as the alias map and
+patterns, so the numbers are optimistic. Your job: review and correct every
+label, then re-run.
+
+| Run | Retrieval Hit@1 (full, 38 q) | Assessor accuracy (18 cases) |
+|---|---|---|
+| First run | 0.711 (aliases had **no** effect: they only appended a control name to the BM25 query) | 0.667 |
+| After fixes | 0.737 (alias match became its own RRF list) | 0.833 |
+
+The assessor fixes were found **on these same cases** (an automatic-logoff
+contradiction pattern matched "is not reasonable", and two patterns were too
+narrow), so 0.833 is an in-sample number. Paraphrase queries are the weak spot
+(Hit@1 0.44): that is the measured case for adding dense retrieval.
+
+**8. Evidence ingestion** (`ingestion/evidence.py`). `.md/.txt` split on
+headings, then paragraphs packed up to 1,200 chars; `.pdf` by page text blocks.
+Chunks never cross a heading, so a citation never spans two topics.
+
+**9. Workflow** (`assessment/workflow.py`). LangGraph `StateGraph`:
+`plan → retrieve → assess → verify → route → (flag_for_review) → report`.
+`route` is a conditional edge. `trace` uses an `operator.add` reducer, so
+every node appends its timing and decisions.
+- Rule-based assessor (`rules.py`): per-criterion regex patterns from
+  `assessment_criteria.yaml`, quoting the matched sentence. Contradiction →
+  not_met; all criteria → met; addressable + documented alternative → met
+  (basis: documented_alternative, always reviewed); some → partially_met;
+  none → insufficient_evidence.
+- Claude assessor (`llm.py`, optional, needs `ANTHROPIC_API_KEY`): top-8
+  evidence chunks + verbatim requirement + criteria → JSON-schema structured
+  output. If the API call fails, that control falls back to the rule-based
+  result and is flagged for review. **Not run against the real API in this
+  environment** (no key); tested with a mocked client.
+- Verification (`verify.py`): every quote must appear verbatim in the chunk it
+  cites, and the chunk must be one the assessor was given. Failure → review.
+
+**10. Human review + report.** Accept or override each routed finding with a
+reviewer name and note; the assessment becomes `complete` when nothing is
+pending. The Markdown report shows the assessor's status and the reviewer's
+decision side by side. Storage is SQLite with JSON rows (`storage.py`).
+
+**11. API + UI.** FastAPI (`api/main.py`) also serves the built React app
+(`frontend/`, Vite + TypeScript + React Router). Pages: assessments list, new
+assessment (upload or fictional sample), findings with quotes, review panel,
+evidence and trace tabs, control catalog, knowledge search with per-signal
+ranks.
+
+**12. Docker.** A two-stage Dockerfile (Node build → Python runtime) and
+`docker-compose.yml`. Built and smoke-tested in the cloud container.
+
 ---
 
 ## 5. Key concepts (glossary)
@@ -238,6 +339,12 @@ Run with `python -m pytest backend/tests -v`.
 | **Deterministic** | Same input → same output every time, no randomness (unlike an LLM) |
 | **Regression test** | A test that locks in a fixed bug so it can't silently come back |
 | **Reproducibility** | Anyone can rebuild the exact same result from the saved inputs |
+| **BM25** | Keyword ranking: rewards rare query words that appear often in a short document |
+| **RRF** | Reciprocal Rank Fusion: add 1/(60 + rank) from each ranked list; fuses lists without comparing their raw scores |
+| **Hard negative** | A passage that looks relevant but belongs to another control (transmission encryption vs encryption at rest) |
+| **Hit@1 / MRR** | Was the right control first? / average of 1 ÷ rank of the first right answer |
+| **Citation verification** | Checking that every quoted sentence really exists, word for word, in the cited chunk |
+| **Human-in-the-loop** | Uncertain findings wait for a person to accept or override them |
 
 ---
 
@@ -334,6 +441,23 @@ break things on purpose to confirm the check works.
    `and`/`or` precedence bug that would have produced a non-existent control ID
    silently, and how a regression test now guards it.
 
+### 8b. Questions about the end-to-end build
+
+7. *Why BM25 + identifiers + aliases, and what did the evaluation show?* →
+   Step 5 and the table in Steps 6–7, including that aliases first did nothing.
+8. *How do you stop the LLM from inventing evidence?* → It only sees retrieved
+   chunks with ids; output is schema-constrained; `verify.py` checks every
+   quote verbatim; failures go to a human.
+9. *Why is "insufficient evidence" different from "not met"?* → Absence of a
+   statement in the uploaded documents is not proof the control is missing;
+   "not met" needs evidence that says so.
+10. *What decides what goes to human review?* → The `route` node: any status
+    other than met, a documented alternative, failed verification, low
+    self-reported confidence, or an LLM failure.
+11. *What would you do next?* → Have a compliance reviewer relabel the eval
+    sets; measure dense retrieval on paraphrases; run the Claude assessor
+    against the same 18 cases and compare with the rules; add Langfuse.
+
 ---
 
 ## 9. Command cheat sheet
@@ -342,7 +466,11 @@ break things on purpose to confirm the check works.
 cd ~/projects/Rag_agent
 source .venv/bin/activate                        # prompt shows (.venv)
 python -m backend.app.ingestion.ecfr_parser      # regenerate controls.yaml
-python -m pytest backend/tests -v                # run tests
+python -m pytest backend/tests -v                # run tests (37)
+python -m backend.app.ingestion.build_kb         # rebuild data/processed/regulatory_chunks.jsonl
+python -m backend.app.evaluation.run_eval        # metrics -> eval_results/latest.md
+uvicorn backend.app.api.main:app --reload        # API on :8000 (serves the UI if built)
+cd frontend && npm install && npm run build      # build the UI (or `npm run dev` on :5173)
 python -m pip install <pkg> && python -m pip freeze > requirements.txt
 git status / git add <files> / git commit -m "..." / git push
 ```

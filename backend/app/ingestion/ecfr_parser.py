@@ -94,17 +94,15 @@ def parse_title(title):
 
             
 
-def main():
+def parse_controls(section_number="164.312", in_scope_ids=frozenset({"164.312(a)(1)"})):
+    """Parse every standard and implementation specification in one CFR section."""
     root = ET.parse(XML_PATH).getroot()
-    section_number = "164.312"
     section = find_section(root, section_number)
 
     stack = []
     controls = []               # all Control objects end up here
     current_standard = None     # the most recent standard we saw
-    IN_SCOPE_V1 = {"164.312(a)(1)"} # the standard we assess in v1
 
-    
     for p in section.findall("P"):
         markers, title, body = paragraph_parts(p)
 
@@ -114,21 +112,20 @@ def main():
             depth = marker_level(marker,stack)
             stack = stack[:depth -1]
             stack.append(marker)
-        
+
         full_id = section_number + "".join(f"({m})" for m in stack)
         if not body and title.endswith(":"):
             continue                          # heading, e.g. "Implementation specifications:"
 
         name, level, req_type = parse_title(title)
-        
+
         if level == "standard":
             parent_id = None
-            current_standard = full_id 
+            current_standard = full_id
         else:
             parent_id = current_standard
 
-
-        in_scope = (full_id in IN_SCOPE_V1) or (parent_id in IN_SCOPE_V1)
+        in_scope = (full_id in in_scope_ids) or (parent_id in in_scope_ids)
 
         control = Control(
             framework="HIPAA",
@@ -145,6 +142,11 @@ def main():
         )
         controls.append(control)
 
+    return controls
+
+
+def main():
+    controls = parse_controls()
     in_scope_controls = [c.model_dump() for c in controls if c.in_scope_v1]
 
     CONTROLS_PATH.parent.mkdir(parents=True, exist_ok=True)

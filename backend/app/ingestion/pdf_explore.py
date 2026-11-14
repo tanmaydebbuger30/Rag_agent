@@ -15,6 +15,12 @@ def classify_line(size, font, text):
     # Everything else is body text
     return None
 
+
+def is_margin_text(size, font, x0):
+    """Sidebar NOTE boxes and page footers are set in Arial at the right margin
+    (x0 >= 340) or at 10pt; the body text is Times New Roman."""
+    return font.startswith("Arial") and (x0 >= 340 or size <= 10)
+
 def build_sections(doc):
     sections = []          # finished sections
     current = None         # the section being filled right now
@@ -34,6 +40,9 @@ def build_sections(doc):
                 size = round(first["size"])
 
                 if size >= 28:
+                    continue
+
+                if is_margin_text(size, first["font"], line["bbox"][0]):
                     continue
 
                 kind = classify_line(size, first["font"], text)
