@@ -1,4 +1,4 @@
-# Evaluation results (2026-11-14T21:01:53+00:00, commit a21ee50)
+# Evaluation results (2026-11-14T21:06:20+00:00, commit c52aeb1)
 
 > Labels are drafts (label_status=draft_unreviewed) written by the same author as the alias map and assessment patterns. Treat these numbers as a regression baseline, not as an independent quality claim.
 
