@@ -1,0 +1,14 @@
+# Core: ingestion, retrieval, workflow, API
+pymupdf==1.28.2
+PyYAML==6.0.3
+pydantic==2.13.5
+numpy==2.4.6
+langgraph==1.2.22
+fastapi==0.163.0
+uvicorn==0.54.0
+python-multipart==0.0.33
+anthropic==2.8.0
+
+# Tests
+pytest==9.1.1
+httpx==0.28.1

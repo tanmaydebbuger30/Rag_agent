@@ -1,0 +1,13 @@
+services:
+  complianceguard:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      # Optional: enables the Claude assessor. Leave unset for the offline rule-based assessor.
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      CG_ASSESSOR: ${CG_ASSESSOR:-rules}
+    volumes:
+      - complianceguard-data:/data
+volumes:
+  complianceguard-data:

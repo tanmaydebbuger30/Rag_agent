@@ -1,0 +1,62 @@
+- framework: HIPAA
+  section: '164.312'
+  control_id: 164.312(a)(1)
+  parent_id: null
+  control_name: Access Control
+  level: standard
+  requirement_type: required
+  safeguard_category: Technical
+  requirement_text: Implement technical policies and procedures for electronic information
+    systems that maintain electronic protected health information to allow access
+    only to those persons or software programs that have been granted access rights
+    as specified in § 164.308(a)(4).
+  citation: 45 CFR § 164.312(a)(1)
+  in_scope_v1: true
+- framework: HIPAA
+  section: '164.312'
+  control_id: 164.312(a)(2)(i)
+  parent_id: 164.312(a)(1)
+  control_name: Unique User Identification
+  level: implementation_specification
+  requirement_type: required
+  safeguard_category: Technical
+  requirement_text: Assign a unique name and/or number for identifying and tracking
+    user identity.
+  citation: 45 CFR § 164.312(a)(2)(i)
+  in_scope_v1: true
+- framework: HIPAA
+  section: '164.312'
+  control_id: 164.312(a)(2)(ii)
+  parent_id: 164.312(a)(1)
+  control_name: Emergency Access Procedure
+  level: implementation_specification
+  requirement_type: required
+  safeguard_category: Technical
+  requirement_text: Establish (and implement as needed) procedures for obtaining necessary
+    electronic protected health information during an emergency.
+  citation: 45 CFR § 164.312(a)(2)(ii)
+  in_scope_v1: true
+- framework: HIPAA
+  section: '164.312'
+  control_id: 164.312(a)(2)(iii)
+  parent_id: 164.312(a)(1)
+  control_name: Automatic Logoff
+  level: implementation_specification
+  requirement_type: addressable
+  safeguard_category: Technical
+  requirement_text: Implement electronic procedures that terminate an electronic session
+    after a predetermined time of inactivity.
+  citation: 45 CFR § 164.312(a)(2)(iii)
+  in_scope_v1: true
+- framework: HIPAA
+  section: '164.312'
+  control_id: 164.312(a)(2)(iv)
+  parent_id: 164.312(a)(1)
+  control_name: Encryption and Decryption
+  level: implementation_specification
+  requirement_type: addressable
+  safeguard_category: Technical
+  requirement_text: Implement a mechanism to encrypt and decrypt electronic protected
+    health information.
+  citation: 45 CFR § 164.312(a)(2)(iv)
+  in_scope_v1: true

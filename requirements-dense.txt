@@ -1,0 +1,3 @@
+# Optional dense retrieval (CG_DENSE=1). Downloads the embedding model from Hugging Face on first use.
+-r requirements.txt
+fastembed==0.9.1
