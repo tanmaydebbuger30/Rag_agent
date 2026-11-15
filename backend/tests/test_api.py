@@ -47,5 +47,5 @@ def test_llm_assessor_requires_key(monkeypatch):
 
 def test_search_and_controls():
     assert client.get("/api/search", params={"q": "break-glass"}).json()["controls"][0]["control_id"] == "164.312(a)(2)(ii)"
-    assert len(client.get("/api/controls").json()) == 5
+    assert len(client.get("/api/controls").json()) == 9
     assert client.get("/api/kb/chunks/ecfr-164.312(a)(1)").json()["authority_level"] == "regulation"

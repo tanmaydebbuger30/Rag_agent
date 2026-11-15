@@ -1,8 +1,8 @@
 """The control catalog: binding requirement text, looked up exactly by control_id.
 
 In-scope controls come from the human-reviewed controls.yaml. The other
-§164.312 controls (audit, integrity, authentication, transmission) are parsed
-from the same eCFR XML; they are retrievable distractors, never assessed in V1.
+§164.308 and §164.312 controls are parsed from the same eCFR XML; they are
+retrievable distractors, never assessed in V1.
 """
 from functools import lru_cache
 
@@ -16,7 +16,7 @@ from backend.app.schemas.regulatory import Control
 @lru_cache
 def all_controls() -> dict[str, Control]:
     reviewed = {c["control_id"]: Control(**c) for c in yaml.safe_load(CONTROLS_YAML.read_text(encoding="utf-8"))}
-    controls = {c.control_id: c for c in parse_controls()}
+    controls = {c.control_id: c for c in parse_controls("164.312") + parse_controls("164.308")}
     controls.update(reviewed)               # the reviewed file wins for in-scope controls
     return controls
 

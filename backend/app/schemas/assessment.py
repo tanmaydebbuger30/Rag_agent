@@ -25,6 +25,7 @@ class Finding(BaseModel):
     citation: str                                # "45 CFR § 164.312(a)(2)(i)"
     requirement_type: Literal["required", "addressable"]
     requirement_text: str
+    safeguard_category: str | None = None        # "Technical", "Administrative"
     status: Status
     basis: Literal["implemented", "documented_alternative"] | None = None
     rationale: str

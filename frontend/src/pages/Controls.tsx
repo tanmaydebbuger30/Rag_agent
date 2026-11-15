@@ -17,7 +17,7 @@ export default function Controls() {
         <div>
           <h1>Control catalog</h1>
           <p>
-            The five in-scope requirements, parsed from the eCFR XML and reviewed by a person. Requirement text is
+            The nine in-scope requirements, parsed from the eCFR XML and reviewed by a person. Requirement text is
             verbatim and is looked up by ID, not retrieved. Criteria are this project's drafted interpretation of the
             HHS and NIST guidance listed under each one.
           </p>

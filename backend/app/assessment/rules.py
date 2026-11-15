@@ -18,7 +18,9 @@ from backend.app.catalog import criteria, get_control
 from backend.app.schemas.assessment import CriterionResult, EvidenceCitation, Finding
 from backend.app.schemas.chunks import EvidenceChunk
 
-SENTENCE_RE = re.compile(r"[^.!?\n]+[.!?]?")
+# A sentence ends at . ! ? followed by whitespace or the end, so an address such as
+# "security@clinic.example" doesn't cut a quote short. ("e.g. " still does.)
+SENTENCE_RE = re.compile(r"(?:[^.!?\n]|[.!?](?=[^\s]))+[.!?]?")
 MAX_CITATIONS = 3
 
 
@@ -98,7 +100,7 @@ def assess_control(control_id: str, chunks: list[EvidenceChunk], guidance: list[
     return Finding(
         control_id=control.control_id, control_name=control.control_name, citation=control.citation,
         requirement_type=control.requirement_type, requirement_text=control.requirement_text,
-        status=status, basis=basis, rationale=rationale, criteria=results, contradictions=contradictions,
+        safeguard_category=control.safeguard_category, status=status, basis=basis, rationale=rationale, criteria=results, contradictions=contradictions,
         gaps=gaps, remediation=remediation, guidance=guidance, assessor="rules",
         needs_review=bool(reasons), review_reasons=reasons,
     )

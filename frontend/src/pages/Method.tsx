@@ -1,6 +1,6 @@
 export default function Method() {
   const steps: [string, string][] = [
-    ["plan", "Select the in-scope controls from the reviewed catalog: 45 CFR § 164.312(a)(1) and its four implementation specifications."],
+    ["plan", "Select the nine in-scope controls from the reviewed catalog: Access Control (§ 164.312(a)) and § 164.308(a)(2), (a)(6) and (a)(8)."],
     ["retrieve", "Look up guidance tagged to each control (HHS, NIST), and rank the organization's evidence chunks for each control with hybrid retrieval."],
     ["assess", "Rule-based: check each criterion with reviewed patterns over every evidence chunk. Claude (optional): read the top-ranked evidence and return a finding in a fixed JSON schema."],
     ["verify", "Check that every quote appears verbatim in the evidence chunk it cites, and that 'met' findings cite something. Failures go to review."],
@@ -25,8 +25,8 @@ export default function Method() {
           <table>
             <thead><tr><th>Content</th><th>Size</th><th>Access</th></tr></thead>
             <tbody>
-              <tr><td>Regulation text, 45 CFR § 164.312</td><td>12 paragraphs</td><td>Exact lookup by control ID in a reviewed catalog (controls.yaml), parsed from eCFR XML</td></tr>
-              <tr><td>Guidance: HHS Security Series #4, NIST SP 800-66r2 §5.3</td><td>45 chunks</td><td>Hybrid retrieval (BM25, optional dense embeddings, fused with reciprocal rank fusion) and control tags</td></tr>
+              <tr><td>Regulation text, 45 CFR § 164.308 and § 164.312</td><td>41 paragraphs</td><td>Exact lookup by control ID in a reviewed catalog (controls.yaml), parsed from eCFR XML</td></tr>
+              <tr><td>Guidance: HHS Security Series #4, NIST SP 800-66r2 §5.1 and §5.3</td><td>91 chunks</td><td>Hybrid retrieval (BM25, optional dense embeddings, fused with reciprocal rank fusion) and control tags</td></tr>
               <tr><td>Organization evidence (uploads)</td><td>Per assessment</td><td>Heading-aware chunking, then hybrid retrieval and criterion matching</td></tr>
             </tbody>
           </table>
@@ -56,7 +56,7 @@ export default function Method() {
             <li>The rule-based assessor checks that expected statements are present; it cannot judge adequacy or detect a paraphrase it has no pattern for.</li>
             <li>The assessment criteria and evaluation labels are drafts written for this project and need review by a compliance professional.</li>
             <li>Retrieval quality numbers come from a small hand-labelled query set (see eval_results/), not from production traffic.</li>
-            <li>V1 covers Access Control only. Other standards are retrievable but never assessed.</li>
+            <li>V1 assesses nine requirements. The other § 164.308 and § 164.312 standards are retrievable but never assessed; physical safeguards (§ 164.310) are not ingested yet.</li>
           </ul>
         </div>
       </section>

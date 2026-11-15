@@ -1,4 +1,5 @@
-# Assessment criteria for the five in-scope Access Control controls.
+# Assessment criteria for the in-scope controls: Access Control (45 CFR 164.312(a))
+# and three administrative standards (164.308(a)(2), (a)(6), (a)(8)).
 #
 # Status: DRAFT written for this portfolio project. The criteria paraphrase the
 # HHS Security Series #4 and NIST SP 800-66r2 guidance chunks listed under
@@ -129,3 +130,108 @@
       sources: [hhs-ts-08]
   contradictions: ['(laptops?|devices?|databases?|backups?|drives?).{0,40}(are|is) not encrypted', 'unencrypted (laptops?|devices?|databases?|backups?)']
   alternative: ['encryption.{0,200}not (reasonable|appropriate)', 'not reasonable and appropriate.{0,200}encrypt']
+
+# ---------------------------------------------------------------------------
+# Administrative safeguards (45 CFR 164.308). Guidance: NIST SP 800-66r2 §5.1.
+# ---------------------------------------------------------------------------
+
+"164.308(a)(2)":
+  aliases: [security officer, security official, HIPAA security officer, CISO, information security officer,
+            who is responsible for security, compliance officer]
+  criteria:
+    - id: sr-1
+      text: A single security official is designated (by name or role)
+      patterns: ['(security|compliance) (official|officer)\b.{0,80}(is|as|shall be|has been) (designated|appointed|assigned|named|the)',
+                 '(designated|appointed|assigned|named).{0,60}(security|compliance) (official|officer)',
+                 '\b(the|our) (hipaa )?(security|compliance) (official|officer) is\b', '\bCISO\b']
+      remediation: Formally designate one security official (by name or role) responsible for HIPAA security.
+      sources: [nist-5.1.2-01]
+    - id: sr-2
+      text: The official is responsible for developing and implementing the security policies and procedures
+      patterns: ['(security|compliance) (official|officer)[^.]{0,150}(responsib\w+|accountable|owns|oversees)[^.]{0,80}(polic|procedure|security program)',
+                 '(responsib\w+|accountable) for.{0,60}(develop\w*|implement\w*|maintain\w*).{0,40}(polic|procedure|security program)']
+      remediation: Document the security official's responsibility for developing, implementing and maintaining the security policies and procedures (for example in a job description).
+      sources: [nist-5.1.2-02, ecfr-164.308(a)(2)]
+    - id: sr-3
+      text: The workforce knows who the security official is and how to contact them
+      patterns: ['(contact|report to|notify|reach).{0,60}(security|compliance) (official|officer)',
+                 '(security|compliance) (official|officer).{0,80}(contact|reached|email|phone|extension)',
+                 '(communicated|announced|published).{0,60}(workforce|staff|employees)']
+      remediation: Communicate the security official's identity and contact details to the entire workforce.
+      sources: [nist-5.1.2-02]
+  contradictions: ['no (one|individual|person) (is|has been) (designated|assigned|responsible).{0,40}security',
+                   'security (official|officer) (role )?(is|remains) (vacant|unfilled|not assigned)']
+
+"164.308(a)(6)(i)":
+  aliases: [incident response plan, incident response policy, IR plan, security incident, cyber incident,
+            ransomware, data breach, incident handling]
+  criteria:
+    - id: ir-1
+      text: A documented incident response policy or procedure exists
+      patterns: ['incident response (policy|plan|procedure|process|program)', 'security incident (policy|procedure|procedures|plan)',
+                 '(policy|procedure|plan) for (responding to|handling|managing) (security )?incidents']
+      remediation: Adopt a written security incident response policy and procedure covering every part of the organization that handles ePHI.
+      sources: [nist-5.1.6-01, nist-5.1.6-03]
+    - id: ir-2
+      text: It defines what counts as a security incident
+      patterns: ['security incident (is|means|includes) ', '(definition|defined as|define).{0,40}(security )?incident',
+                 '(attempted|suspected) or (successful|actual|known) unauthorized (access|use|disclosure)']
+      remediation: Define a security incident (attempted or successful unauthorized access, use, disclosure, modification or destruction of information, or interference with system operations, per 45 CFR 164.304).
+      sources: [nist-5.1.6-01]
+    - id: ir-3
+      text: Roles for responding are assigned (an incident response team or lead)
+      patterns: ['incident response (team|lead|coordinator|manager)', '(leads?|coordinates?|manages?|owns?) (the )?(incident )?response',
+                 '(responsible|accountable) for (responding to|coordinating|handling).{0,30}incidents?']
+      remediation: Assign who leads and who participates in incident response, including backups when primary staff are unavailable.
+      sources: [nist-5.1.6-02]
+  contradictions: ['(no|does not have an?|has not adopted an?) (formal |written )?incident response (plan|policy|procedure)']
+
+"164.308(a)(6)(ii)":
+  aliases: [report a security incident, incident reporting, incident log, breach report, suspected incident,
+            post-incident review, lessons learned, incident containment]
+  criteria:
+    - id: rr-1
+      text: The workforce must report suspected or known incidents, with a defined channel and timeframe
+      patterns: ['(report|notify).{0,80}(suspected|known|potential|actual).{0,30}incidents?',
+                 '(suspected|known|potential).{0,30}incidents?.{0,80}(reported|report)',
+                 '(report|notify).{0,60}within \d+ (minutes?|hours?|days?)']
+      remediation: Require staff to report suspected or known security incidents immediately, and say how (help desk, phone, email) and to whom.
+      sources: [nist-5.1.6-03, ecfr-164.308(a)(6)(ii)]
+    - id: rr-2
+      text: Incidents are contained and harmful effects mitigated
+      patterns: ['\b(contain|containment|contained|isolat\w+|mitigat\w+|eradicat\w+|remediat\w+)\b.{0,80}(incident|threat|system|device|harm|effects?)',
+                 '(incident|threat).{0,80}\b(contain\w*|mitigat\w+|isolat\w+)\b']
+      remediation: Describe the response steps (contain the incident, mitigate harmful effects to the extent practicable, recover).
+      sources: [nist-5.1.6-03]
+    - id: rr-3
+      text: Security incidents and their outcomes are documented
+      patterns: ['incidents?.{0,80}(logged|documented|recorded|tracked)', '(incident|security) (log|register|tracker|record)s?\b',
+                 '(document|record|log)\w*.{0,60}(incidents?|outcome|resolution)']
+      remediation: Keep a record of every security incident and its outcome (what happened, actions taken, resolution).
+      sources: [nist-5.1.6-03, nist-5.1.6-04]
+  contradictions: ['incidents? (are|is) not (logged|documented|recorded|tracked|reported)']
+
+"164.308(a)(8)":
+  aliases: [security evaluation, security assessment, annual review, compliance review, internal audit,
+            gap assessment, policy review, penetration test, HIPAA audit]
+  criteria:
+    - id: ev-1
+      text: Security evaluations are performed on a defined periodic schedule
+      patterns: ['(annual(ly)?|yearly|every (year|\d+ months)|periodic(ally)?)[^.]{0,40}(security|hipaa|compliance|risk) (evaluation|assessment|audit)',
+                 '(security|hipaa|compliance|risk) (evaluation|assessment|audit)[^.]{0,80}(annual(ly)?|yearly|every (year|\d+ months)|periodic(ally)?)']
+      remediation: Set a frequency for security evaluations (for example annually) based on the organization's size, complexity and risk.
+      sources: [nist-5.1.8-05, ecfr-164.308(a)(8)]
+    - id: ev-2
+      text: Evaluations are also triggered by environmental or operational changes
+      patterns: ['(environmental|operational|significant|major) (or (environmental|operational) )?changes?.{0,120}(evaluat|assess|review)',
+                 '(evaluat|assess|review)\w*.{0,120}(new (system|technology|vendor)|significant changes?|operational changes?|environmental changes?)']
+      remediation: Require an evaluation when environmental or operational changes affect ePHI security (new systems, vendors, office moves, newly recognized threats).
+      sources: [nist-5.1.8-03, nist-5.1.8-05]
+    - id: ev-3
+      text: Evaluation results are documented with findings and remediation
+      patterns: ['(findings|results).{0,80}(documented|recorded|reported|tracked|remediat)',
+                 '(document|record|report)\w*.{0,60}(findings|results|recommendations)', 'remediation plan']
+      remediation: Document each evaluation's findings, remediation decisions and any accepted risks, and report them to management.
+      sources: [nist-5.1.8-04]
+  contradictions: ['(no|never).{0,30}(security )?(evaluation|assessment|audit) (has been|was|is) (performed|conducted|done)',
+                   '(has|have) not (been )?(evaluated|assessed|audited)']

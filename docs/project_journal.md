@@ -82,6 +82,7 @@ is found with retrieval (RAG).
 | 11 | FastAPI backend + React frontend | ✅ |
 | 12 | Docker image | ✅ built and smoke-tested |
 | 13 | Free deployment on Render (`render.yaml`): https://complianceguard-ai-l4aq.onrender.com | ✅ live (Hugging Face Docker Spaces now need a paid PRO plan, so we switched) |
+| 14 | Scope +4 controls: § 164.308(a)(2), (a)(6)(i), (a)(6)(ii), (a)(8); parser fixed for § 164.308; NIST §5.1 ingested | ✅ |
 | - | Langfuse tracing | ⬜ not done (a per-node trace is stored with each assessment instead) |
 
 ---
@@ -322,6 +323,33 @@ ranks.
 
 **12. Docker.** A two-stage Dockerfile (Node build → Python runtime) and
 `docker-compose.yml`. Built and smoke-tested in the cloud container.
+
+### Step 14: three more checklist items (§ 164.308)
+
+Vanta's public HIPAA checklist has 9 steps; three of them can be evidenced by
+written policies and map to single Security Rule standards: appoint a security
+officer → § 164.308(a)(2); breach/incident reporting → § 164.308(a)(6);
+annual review → § 164.308(a)(8). They are now assessed alongside Access Control.
+
+Parser bugs found by extending to § 164.308 (each has a regression test):
+1. Untitled paragraphs ("(a) A covered entity ... must:") have no `<I>` title →
+   `title.endswith` on `None` crashed. Fix: skip untitled paragraphs.
+2. "Implementation specifications. Implement:" ends in "." not ":", so it was
+   parsed as a control. Fix: skip any title starting "Implementation specifications".
+3. § 164.308(b)(1) has no "Standard:" label, so it became a child of (a)(8)
+   (and in scope!). Fix: a spec's parent must share the top-level marker.
+4. NIST cites "§ 164.308(a)(1)" but the standard's id is (a)(1)(i); the chunker
+   now tries "", "(1)", "(i)" suffixes.
+
+Assessment-pattern problems found on the sample clinic (before writing eval
+cases): the "periodic evaluation" pattern matched a *quarterly access review*,
+and a cross-sentence pattern quoted the wrong sentence. Fixed by requiring
+"security/HIPAA/risk evaluation" and keeping matches inside one sentence.
+
+Measured: original 38 retrieval queries unchanged at Hit@1 0.737 on the
+132-chunk KB; 12 new queries Hit@1 0.667; new assessor cases 8/9 on the first
+run. The miss ("The Security Officer role is **currently** vacant") was left
+unfixed on purpose: tuning a pattern to its own test case inflates the score.
 
 ---
 

@@ -94,7 +94,14 @@ def parse_title(title):
 
             
 
-def parse_controls(section_number="164.312", in_scope_ids=frozenset({"164.312(a)(1)"})):
+SAFEGUARD_CATEGORY = {"164.308": "Administrative", "164.310": "Physical", "164.312": "Technical"}
+
+# V1 scope: Access Control, plus three administrative standards that written
+# policies can evidence (security official, incident procedures, evaluation).
+IN_SCOPE_V1 = frozenset({"164.312(a)(1)", "164.308(a)(2)", "164.308(a)(6)(i)", "164.308(a)(8)"})
+
+
+def parse_controls(section_number="164.312", in_scope_ids=IN_SCOPE_V1):
     """Parse every standard and implementation specification in one CFR section."""
     root = ET.parse(XML_PATH).getroot()
     section = find_section(root, section_number)
@@ -102,6 +109,7 @@ def parse_controls(section_number="164.312", in_scope_ids=frozenset({"164.312(a)
     stack = []
     controls = []               # all Control objects end up here
     current_standard = None     # the most recent standard we saw
+    current_standard_top = None # its top-level marker, e.g. "a"
 
     for p in section.findall("P"):
         markers, title, body = paragraph_parts(p)
@@ -114,14 +122,22 @@ def parse_controls(section_number="164.312", in_scope_ids=frozenset({"164.312(a)
             stack.append(marker)
 
         full_id = section_number + "".join(f"({m})" for m in stack)
-        if not body and title.endswith(":"):
-            continue                          # heading, e.g. "Implementation specifications:"
+        if title is None:
+            continue                          # untitled paragraph: intro text or a list item, not a control
+        if title.lower().startswith("implementation specifications"):
+            continue                          # list heading, e.g. "Implementation specifications:" / "... Implement:"
 
         name, level, req_type = parse_title(title)
 
+        # An implementation specification belongs to the latest standard under the same
+        # top-level paragraph. § 164.308(b)(1) has no "Standard:" label but starts a new
+        # paragraph (b), so it is a standard, not a child of (a)(8).
+        if level != "standard" and (current_standard is None or stack[0] != current_standard_top):
+            level = "standard"
         if level == "standard":
             parent_id = None
             current_standard = full_id
+            current_standard_top = stack[0]
         else:
             parent_id = current_standard
 
@@ -135,7 +151,7 @@ def parse_controls(section_number="164.312", in_scope_ids=frozenset({"164.312(a)
             control_name=name,
             level=level,
             requirement_type=req_type,
-            safeguard_category="Technical",
+            safeguard_category=SAFEGUARD_CATEGORY.get(section_number, "Other"),
             requirement_text=body,
             citation=f"45 CFR § {full_id}",
             in_scope_v1=in_scope,
@@ -146,7 +162,7 @@ def parse_controls(section_number="164.312", in_scope_ids=frozenset({"164.312(a)
 
 
 def main():
-    controls = parse_controls()
+    controls = parse_controls("164.312") + parse_controls("164.308")
     in_scope_controls = [c.model_dump() for c in controls if c.in_scope_v1]
 
     CONTROLS_PATH.parent.mkdir(parents=True, exist_ok=True)

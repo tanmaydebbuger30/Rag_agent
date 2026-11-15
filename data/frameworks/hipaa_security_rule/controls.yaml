@@ -60,3 +60,57 @@
     health information.
   citation: 45 CFR § 164.312(a)(2)(iv)
   in_scope_v1: true
+- framework: HIPAA
+  section: '164.308'
+  control_id: 164.308(a)(2)
+  parent_id: null
+  control_name: Assigned Security Responsibility
+  level: standard
+  requirement_type: required
+  safeguard_category: Administrative
+  requirement_text: Identify the security official who is responsible for the development
+    and implementation of the policies and procedures required by this subpart for
+    the covered entity or business associate.
+  citation: 45 CFR § 164.308(a)(2)
+  in_scope_v1: true
+- framework: HIPAA
+  section: '164.308'
+  control_id: 164.308(a)(6)(i)
+  parent_id: null
+  control_name: Security Incident Procedures
+  level: standard
+  requirement_type: required
+  safeguard_category: Administrative
+  requirement_text: Implement policies and procedures to address security incidents.
+  citation: 45 CFR § 164.308(a)(6)(i)
+  in_scope_v1: true
+- framework: HIPAA
+  section: '164.308'
+  control_id: 164.308(a)(6)(ii)
+  parent_id: 164.308(a)(6)(i)
+  control_name: Response and Reporting
+  level: implementation_specification
+  requirement_type: required
+  safeguard_category: Administrative
+  requirement_text: Identify and respond to suspected or known security incidents;
+    mitigate, to the extent practicable, harmful effects of security incidents that
+    are known to the covered entity or business associate; and document security incidents
+    and their outcomes.
+  citation: 45 CFR § 164.308(a)(6)(ii)
+  in_scope_v1: true
+- framework: HIPAA
+  section: '164.308'
+  control_id: 164.308(a)(8)
+  parent_id: null
+  control_name: Evaluation
+  level: standard
+  requirement_type: required
+  safeguard_category: Administrative
+  requirement_text: Perform a periodic technical and nontechnical evaluation, based
+    initially upon the standards implemented under this rule and, subsequently, in
+    response to environmental or operational changes affecting the security of electronic
+    protected health information, that establishes the extent to which a covered entity's
+    or business associate's security policies and procedures meet the requirements
+    of this subpart.
+  citation: 45 CFR § 164.308(a)(8)
+  in_scope_v1: true

@@ -51,7 +51,7 @@ def _timed(name):
 @_timed("plan")
 def plan(state):
     ids = [c.control_id for c in in_scope_controls()]
-    return {"control_ids": ids}, {"controls": ids, "scope": "HIPAA Security Rule - Access Control (45 CFR 164.312(a))"}
+    return {"control_ids": ids}, {"controls": ids, "scope": "HIPAA Security Rule: Access Control + 164.308(a)(2), (a)(6), (a)(8)"}
 
 
 @_timed("retrieve")

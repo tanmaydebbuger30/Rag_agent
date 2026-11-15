@@ -36,6 +36,7 @@ export interface Finding {
   citation: string;
   requirement_type: "required" | "addressable";
   requirement_text: string;
+  safeguard_category: string | null;
   status: Status;
   basis: "implemented" | "documented_alternative" | null;
   rationale: string;

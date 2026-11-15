@@ -1,0 +1,1043 @@
+{
+  "created_at": "2026-11-14T23:59:25+00:00",
+  "commit": "a12cd65",
+  "caveat": "Labels are drafts (label_status=draft_unreviewed) written by the same author as the alias map and assessment patterns. Treat these numbers as a regression baseline, not as an independent quality claim.",
+  "datasets": {
+    "retrieval": "regulatory_retrieval_v1",
+    "assessment": "assessment_cases_v1"
+  },
+  "retrieval_n": 50,
+  "retrieval": {
+    "bm25_only": {
+      "metrics": {
+        "citation": {
+          "hit@1": 0.875,
+          "hit@3": 0.875,
+          "recall@3": 0.875,
+          "mrr": 0.9,
+          "n": 8
+        },
+        "ALL": {
+          "hit@1": 0.64,
+          "hit@3": 0.76,
+          "recall@3": 0.75,
+          "mrr": 0.726,
+          "n": 50
+        },
+        "split:dev": {
+          "hit@1": 0.658,
+          "hit@3": 0.763,
+          "recall@3": 0.763,
+          "mrr": 0.735,
+          "n": 38
+        },
+        "split:test": {
+          "hit@1": 0.583,
+          "hit@3": 0.75,
+          "recall@3": 0.708,
+          "mrr": 0.697,
+          "n": 12
+        },
+        "verbatim": {
+          "hit@1": 1.0,
+          "hit@3": 1.0,
+          "recall@3": 1.0,
+          "mrr": 1.0,
+          "n": 7
+        },
+        "paraphrase": {
+          "hit@1": 0.333,
+          "hit@3": 0.417,
+          "recall@3": 0.417,
+          "mrr": 0.443,
+          "n": 12
+        },
+        "jargon": {
+          "hit@1": 0.545,
+          "hit@3": 0.818,
+          "recall@3": 0.818,
+          "mrr": 0.68,
+          "n": 11
+        },
+        "hard_negative": {
+          "hit@1": 0.6,
+          "hit@3": 0.8,
+          "recall@3": 0.75,
+          "mrr": 0.731,
+          "n": 10
+        },
+        "out_of_scope": {
+          "hit@1": 1.0,
+          "hit@3": 1.0,
+          "recall@3": 1.0,
+          "mrr": 1.0,
+          "n": 2
+        }
+      },
+      "hit@1_misses": [
+        {
+          "query": "164.312(a)(1)",
+          "expected": [
+            "164.312(a)(1)"
+          ],
+          "got_top3": [
+            "164.312(a)(2)(i)",
+            "164.312(a)(2)(iv)",
+            "164.312(a)(2)(iii)"
+          ]
+        },
+        {
+          "query": "every employee needs their own login",
+          "expected": [
+            "164.312(a)(2)(i)"
+          ],
+          "got_top3": [
+            "164.308(a)(5)(ii)(B)",
+            "164.308(a)(5)(ii)(D)",
+            "164.312(b)"
+          ]
+        },
+        {
+          "query": "can two nurses share one EHR username?",
+          "expected": [
+            "164.312(a)(2)(i)"
+          ],
+          "got_top3": [
+            "164.308(a)(4)(i)",
+            "164.312(d)",
+            "164.308(a)(7)(i)"
+          ]
+        },
+        {
+          "query": "how do clinicians get into the record system if the network is down",
+          "expected": [
+            "164.312(a)(2)(ii)"
+          ],
+          "got_top3": [
+            "164.312(b)",
+            "164.312(a)(1)",
+            "164.308(a)(1)(ii)(D)"
+          ]
+        },
+        {
+          "query": "log users out when they walk away from the computer",
+          "expected": [
+            "164.312(a)(2)(iii)"
+          ],
+          "got_top3": [
+            "164.312(a)(2)(i)",
+            "164.312(a)(1)",
+            "164.312(a)(2)(iii)"
+          ]
+        },
+        {
+          "query": "protect stored patient data so a stolen laptop cannot be read",
+          "expected": [
+            "164.312(a)(2)(iv)"
+          ],
+          "got_top3": [
+            "164.312(c)(1)",
+            "164.308(a)(1)(i)",
+            "164.312(e)(2)(ii)"
+          ]
+        },
+        {
+          "query": "break-glass account procedure",
+          "expected": [
+            "164.312(a)(2)(ii)"
+          ],
+          "got_top3": [
+            "164.308(a)(3)(ii)(C)",
+            "164.312(a)(2)(ii)",
+            "164.308(a)(1)(ii)(C)"
+          ]
+        },
+        {
+          "query": "BitLocker full-disk encryption on laptops",
+          "expected": [
+            "164.312(a)(2)(iv)"
+          ],
+          "got_top3": [
+            "164.312(e)(2)(ii)",
+            "164.312(a)(2)(iii)",
+            "164.312(a)(2)(iv)"
+          ]
+        },
+        {
+          "query": "generic shared accounts",
+          "expected": [
+            "164.312(a)(2)(i)"
+          ],
+          "got_top3": [
+            "164.308(a)(3)(ii)(C)",
+            "164.308(a)(5)(ii)(B)",
+            "164.308(a)(5)(ii)(D)"
+          ]
+        },
+        {
+          "query": "AES-256 encryption at rest",
+          "expected": [
+            "164.312(a)(2)(iv)"
+          ],
+          "got_top3": [
+            "164.312(a)(2)(iii)",
+            "164.312(a)(2)(iv)",
+            "164.312(e)(2)(ii)"
+          ]
+        },
+        {
+          "query": "encrypt ePHI sent over email or the internet",
+          "expected": [
+            "164.312(e)(2)(ii)"
+          ],
+          "got_top3": [
+            "164.312(e)(1)",
+            "164.312(e)(2)(ii)",
+            "164.312(a)(2)(iii)"
+          ]
+        },
+        {
+          "query": "TLS for data in transit",
+          "expected": [
+            "164.312(e)(2)(ii)",
+            "164.312(e)(1)"
+          ],
+          "got_top3": [
+            "164.308(a)(7)(ii)(A)",
+            "164.308(a)(7)(ii)(B)",
+            "164.308(a)(7)(ii)(E)"
+          ]
+        },
+        {
+          "query": "do we need multi-factor authentication?",
+          "expected": [
+            "164.312(d)"
+          ],
+          "got_top3": [
+            "164.312(a)(1)",
+            "164.312(d)",
+            "164.308(a)(8)"
+          ]
+        },
+        {
+          "query": "who is in charge of HIPAA security at our company?",
+          "expected": [
+            "164.308(a)(2)"
+          ],
+          "got_top3": [
+            "164.308(a)(6)(i)",
+            "164.308(a)(5)(ii)(A)",
+            "164.308(a)(1)(i)"
+          ]
+        },
+        {
+          "query": "what should an employee do after clicking a phishing link?",
+          "expected": [
+            "164.308(a)(6)(ii)",
+            "164.308(a)(6)(i)"
+          ],
+          "got_top3": [
+            "164.312(b)",
+            "164.312(a)(2)(iii)",
+            "164.308(a)(5)(ii)(A)"
+          ]
+        },
+        {
+          "query": "how often do we need to review our security program?",
+          "expected": [
+            "164.308(a)(8)"
+          ],
+          "got_top3": [
+            "164.308(a)(1)(ii)(D)",
+            "164.312(b)",
+            "164.308(a)(4)(ii)(C)"
+          ]
+        },
+        {
+          "query": "annual HIPAA security assessment",
+          "expected": [
+            "164.308(a)(8)"
+          ],
+          "got_top3": [
+            "164.308(a)(1)(ii)(A)",
+            "164.308(a)(6)(i)",
+            "164.308(a)(2)"
+          ]
+        },
+        {
+          "query": "conduct a risk analysis of threats to ePHI",
+          "expected": [
+            "164.308(a)(1)(ii)(A)"
+          ],
+          "got_top3": [
+            "164.312(c)(1)",
+            "164.308(a)(5)(i)",
+            "164.308(a)(6)(i)"
+          ]
+        }
+      ]
+    },
+    "bm25+aliases": {
+      "metrics": {
+        "citation": {
+          "hit@1": 0.875,
+          "hit@3": 0.875,
+          "recall@3": 0.875,
+          "mrr": 0.9,
+          "n": 8
+        },
+        "ALL": {
+          "hit@1": 0.7,
+          "hit@3": 0.78,
+          "recall@3": 0.77,
+          "mrr": 0.767,
+          "n": 50
+        },
+        "split:dev": {
+          "hit@1": 0.684,
+          "hit@3": 0.763,
+          "recall@3": 0.763,
+          "mrr": 0.748,
+          "n": 38
+        },
+        "split:test": {
+          "hit@1": 0.75,
+          "hit@3": 0.833,
+          "recall@3": 0.792,
+          "mrr": 0.824,
+          "n": 12
+        },
+        "verbatim": {
+          "hit@1": 1.0,
+          "hit@3": 1.0,
+          "recall@3": 1.0,
+          "mrr": 1.0,
+          "n": 7
+        },
+        "paraphrase": {
+          "hit@1": 0.333,
+          "hit@3": 0.417,
+          "recall@3": 0.417,
+          "mrr": 0.443,
+          "n": 12
+        },
+        "jargon": {
+          "hit@1": 0.818,
+          "hit@3": 0.909,
+          "recall@3": 0.909,
+          "mrr": 0.864,
+          "n": 11
+        },
+        "hard_negative": {
+          "hit@1": 0.6,
+          "hit@3": 0.8,
+          "recall@3": 0.75,
+          "mrr": 0.731,
+          "n": 10
+        },
+        "out_of_scope": {
+          "hit@1": 1.0,
+          "hit@3": 1.0,
+          "recall@3": 1.0,
+          "mrr": 1.0,
+          "n": 2
+        }
+      },
+      "hit@1_misses": [
+        {
+          "query": "164.312(a)(1)",
+          "expected": [
+            "164.312(a)(1)"
+          ],
+          "got_top3": [
+            "164.312(a)(2)(i)",
+            "164.312(a)(2)(iv)",
+            "164.312(a)(2)(iii)"
+          ]
+        },
+        {
+          "query": "every employee needs their own login",
+          "expected": [
+            "164.312(a)(2)(i)"
+          ],
+          "got_top3": [
+            "164.308(a)(5)(ii)(B)",
+            "164.308(a)(5)(ii)(D)",
+            "164.312(b)"
+          ]
+        },
+        {
+          "query": "can two nurses share one EHR username?",
+          "expected": [
+            "164.312(a)(2)(i)"
+          ],
+          "got_top3": [
+            "164.308(a)(4)(i)",
+            "164.312(d)",
+            "164.308(a)(7)(i)"
+          ]
+        },
+        {
+          "query": "how do clinicians get into the record system if the network is down",
+          "expected": [
+            "164.312(a)(2)(ii)"
+          ],
+          "got_top3": [
+            "164.312(b)",
+            "164.312(a)(1)",
+            "164.308(a)(1)(ii)(D)"
+          ]
+        },
+        {
+          "query": "log users out when they walk away from the computer",
+          "expected": [
+            "164.312(a)(2)(iii)"
+          ],
+          "got_top3": [
+            "164.312(a)(2)(i)",
+            "164.312(a)(1)",
+            "164.312(a)(2)(iii)"
+          ]
+        },
+        {
+          "query": "protect stored patient data so a stolen laptop cannot be read",
+          "expected": [
+            "164.312(a)(2)(iv)"
+          ],
+          "got_top3": [
+            "164.312(c)(1)",
+            "164.308(a)(1)(i)",
+            "164.312(e)(2)(ii)"
+          ]
+        },
+        {
+          "query": "generic shared accounts",
+          "expected": [
+            "164.312(a)(2)(i)"
+          ],
+          "got_top3": [
+            "164.308(a)(3)(ii)(C)",
+            "164.308(a)(5)(ii)(B)",
+            "164.308(a)(5)(ii)(D)"
+          ]
+        },
+        {
+          "query": "AES-256 encryption at rest",
+          "expected": [
+            "164.312(a)(2)(iv)"
+          ],
+          "got_top3": [
+            "164.312(a)(2)(iii)",
+            "164.312(a)(2)(iv)",
+            "164.312(e)(2)(ii)"
+          ]
+        },
+        {
+          "query": "encrypt ePHI sent over email or the internet",
+          "expected": [
+            "164.312(e)(2)(ii)"
+          ],
+          "got_top3": [
+            "164.312(e)(1)",
+            "164.312(e)(2)(ii)",
+            "164.312(a)(2)(iii)"
+          ]
+        },
+        {
+          "query": "TLS for data in transit",
+          "expected": [
+            "164.312(e)(2)(ii)",
+            "164.312(e)(1)"
+          ],
+          "got_top3": [
+            "164.308(a)(7)(ii)(A)",
+            "164.308(a)(7)(ii)(B)",
+            "164.308(a)(7)(ii)(E)"
+          ]
+        },
+        {
+          "query": "do we need multi-factor authentication?",
+          "expected": [
+            "164.312(d)"
+          ],
+          "got_top3": [
+            "164.312(a)(1)",
+            "164.312(d)",
+            "164.308(a)(8)"
+          ]
+        },
+        {
+          "query": "who is in charge of HIPAA security at our company?",
+          "expected": [
+            "164.308(a)(2)"
+          ],
+          "got_top3": [
+            "164.308(a)(6)(i)",
+            "164.308(a)(5)(ii)(A)",
+            "164.308(a)(1)(i)"
+          ]
+        },
+        {
+          "query": "what should an employee do after clicking a phishing link?",
+          "expected": [
+            "164.308(a)(6)(ii)",
+            "164.308(a)(6)(i)"
+          ],
+          "got_top3": [
+            "164.312(b)",
+            "164.312(a)(2)(iii)",
+            "164.308(a)(5)(ii)(A)"
+          ]
+        },
+        {
+          "query": "how often do we need to review our security program?",
+          "expected": [
+            "164.308(a)(8)"
+          ],
+          "got_top3": [
+            "164.308(a)(1)(ii)(D)",
+            "164.312(b)",
+            "164.308(a)(4)(ii)(C)"
+          ]
+        },
+        {
+          "query": "conduct a risk analysis of threats to ePHI",
+          "expected": [
+            "164.308(a)(1)(ii)(A)"
+          ],
+          "got_top3": [
+            "164.312(c)(1)",
+            "164.308(a)(5)(i)",
+            "164.308(a)(6)(i)"
+          ]
+        }
+      ]
+    },
+    "bm25+identifiers": {
+      "metrics": {
+        "citation": {
+          "hit@1": 1.0,
+          "hit@3": 1.0,
+          "recall@3": 1.0,
+          "mrr": 1.0,
+          "n": 8
+        },
+        "ALL": {
+          "hit@1": 0.66,
+          "hit@3": 0.78,
+          "recall@3": 0.77,
+          "mrr": 0.742,
+          "n": 50
+        },
+        "split:dev": {
+          "hit@1": 0.684,
+          "hit@3": 0.789,
+          "recall@3": 0.789,
+          "mrr": 0.756,
+          "n": 38
+        },
+        "split:test": {
+          "hit@1": 0.583,
+          "hit@3": 0.75,
+          "recall@3": 0.708,
+          "mrr": 0.697,
+          "n": 12
+        },
+        "verbatim": {
+          "hit@1": 1.0,
+          "hit@3": 1.0,
+          "recall@3": 1.0,
+          "mrr": 1.0,
+          "n": 7
+        },
+        "paraphrase": {
+          "hit@1": 0.333,
+          "hit@3": 0.417,
+          "recall@3": 0.417,
+          "mrr": 0.443,
+          "n": 12
+        },
+        "jargon": {
+          "hit@1": 0.545,
+          "hit@3": 0.818,
+          "recall@3": 0.818,
+          "mrr": 0.68,
+          "n": 11
+        },
+        "hard_negative": {
+          "hit@1": 0.6,
+          "hit@3": 0.8,
+          "recall@3": 0.75,
+          "mrr": 0.731,
+          "n": 10
+        },
+        "out_of_scope": {
+          "hit@1": 1.0,
+          "hit@3": 1.0,
+          "recall@3": 1.0,
+          "mrr": 1.0,
+          "n": 2
+        }
+      },
+      "hit@1_misses": [
+        {
+          "query": "every employee needs their own login",
+          "expected": [
+            "164.312(a)(2)(i)"
+          ],
+          "got_top3": [
+            "164.308(a)(5)(ii)(B)",
+            "164.308(a)(5)(ii)(D)",
+            "164.312(b)"
+          ]
+        },
+        {
+          "query": "can two nurses share one EHR username?",
+          "expected": [
+            "164.312(a)(2)(i)"
+          ],
+          "got_top3": [
+            "164.308(a)(4)(i)",
+            "164.312(d)",
+            "164.308(a)(7)(i)"
+          ]
+        },
+        {
+          "query": "how do clinicians get into the record system if the network is down",
+          "expected": [
+            "164.312(a)(2)(ii)"
+          ],
+          "got_top3": [
+            "164.312(b)",
+            "164.312(a)(1)",
+            "164.308(a)(1)(ii)(D)"
+          ]
+        },
+        {
+          "query": "log users out when they walk away from the computer",
+          "expected": [
+            "164.312(a)(2)(iii)"
+          ],
+          "got_top3": [
+            "164.312(a)(2)(i)",
+            "164.312(a)(1)",
+            "164.312(a)(2)(iii)"
+          ]
+        },
+        {
+          "query": "protect stored patient data so a stolen laptop cannot be read",
+          "expected": [
+            "164.312(a)(2)(iv)"
+          ],
+          "got_top3": [
+            "164.312(c)(1)",
+            "164.308(a)(1)(i)",
+            "164.312(e)(2)(ii)"
+          ]
+        },
+        {
+          "query": "break-glass account procedure",
+          "expected": [
+            "164.312(a)(2)(ii)"
+          ],
+          "got_top3": [
+            "164.308(a)(3)(ii)(C)",
+            "164.312(a)(2)(ii)",
+            "164.308(a)(1)(ii)(C)"
+          ]
+        },
+        {
+          "query": "BitLocker full-disk encryption on laptops",
+          "expected": [
+            "164.312(a)(2)(iv)"
+          ],
+          "got_top3": [
+            "164.312(e)(2)(ii)",
+            "164.312(a)(2)(iii)",
+            "164.312(a)(2)(iv)"
+          ]
+        },
+        {
+          "query": "generic shared accounts",
+          "expected": [
+            "164.312(a)(2)(i)"
+          ],
+          "got_top3": [
+            "164.308(a)(3)(ii)(C)",
+            "164.308(a)(5)(ii)(B)",
+            "164.308(a)(5)(ii)(D)"
+          ]
+        },
+        {
+          "query": "AES-256 encryption at rest",
+          "expected": [
+            "164.312(a)(2)(iv)"
+          ],
+          "got_top3": [
+            "164.312(a)(2)(iii)",
+            "164.312(a)(2)(iv)",
+            "164.312(e)(2)(ii)"
+          ]
+        },
+        {
+          "query": "encrypt ePHI sent over email or the internet",
+          "expected": [
+            "164.312(e)(2)(ii)"
+          ],
+          "got_top3": [
+            "164.312(e)(1)",
+            "164.312(e)(2)(ii)",
+            "164.312(a)(2)(iii)"
+          ]
+        },
+        {
+          "query": "TLS for data in transit",
+          "expected": [
+            "164.312(e)(2)(ii)",
+            "164.312(e)(1)"
+          ],
+          "got_top3": [
+            "164.308(a)(7)(ii)(A)",
+            "164.308(a)(7)(ii)(B)",
+            "164.308(a)(7)(ii)(E)"
+          ]
+        },
+        {
+          "query": "do we need multi-factor authentication?",
+          "expected": [
+            "164.312(d)"
+          ],
+          "got_top3": [
+            "164.312(a)(1)",
+            "164.312(d)",
+            "164.308(a)(8)"
+          ]
+        },
+        {
+          "query": "who is in charge of HIPAA security at our company?",
+          "expected": [
+            "164.308(a)(2)"
+          ],
+          "got_top3": [
+            "164.308(a)(6)(i)",
+            "164.308(a)(5)(ii)(A)",
+            "164.308(a)(1)(i)"
+          ]
+        },
+        {
+          "query": "what should an employee do after clicking a phishing link?",
+          "expected": [
+            "164.308(a)(6)(ii)",
+            "164.308(a)(6)(i)"
+          ],
+          "got_top3": [
+            "164.312(b)",
+            "164.312(a)(2)(iii)",
+            "164.308(a)(5)(ii)(A)"
+          ]
+        },
+        {
+          "query": "how often do we need to review our security program?",
+          "expected": [
+            "164.308(a)(8)"
+          ],
+          "got_top3": [
+            "164.308(a)(1)(ii)(D)",
+            "164.312(b)",
+            "164.308(a)(4)(ii)(C)"
+          ]
+        },
+        {
+          "query": "annual HIPAA security assessment",
+          "expected": [
+            "164.308(a)(8)"
+          ],
+          "got_top3": [
+            "164.308(a)(1)(ii)(A)",
+            "164.308(a)(6)(i)",
+            "164.308(a)(2)"
+          ]
+        },
+        {
+          "query": "conduct a risk analysis of threats to ePHI",
+          "expected": [
+            "164.308(a)(1)(ii)(A)"
+          ],
+          "got_top3": [
+            "164.312(c)(1)",
+            "164.308(a)(5)(i)",
+            "164.308(a)(6)(i)"
+          ]
+        }
+      ]
+    },
+    "full (bm25+aliases+identifiers)": {
+      "metrics": {
+        "citation": {
+          "hit@1": 1.0,
+          "hit@3": 1.0,
+          "recall@3": 1.0,
+          "mrr": 1.0,
+          "n": 8
+        },
+        "ALL": {
+          "hit@1": 0.72,
+          "hit@3": 0.8,
+          "recall@3": 0.79,
+          "mrr": 0.783,
+          "n": 50
+        },
+        "split:dev": {
+          "hit@1": 0.711,
+          "hit@3": 0.789,
+          "recall@3": 0.789,
+          "mrr": 0.769,
+          "n": 38
+        },
+        "split:test": {
+          "hit@1": 0.75,
+          "hit@3": 0.833,
+          "recall@3": 0.792,
+          "mrr": 0.824,
+          "n": 12
+        },
+        "verbatim": {
+          "hit@1": 1.0,
+          "hit@3": 1.0,
+          "recall@3": 1.0,
+          "mrr": 1.0,
+          "n": 7
+        },
+        "paraphrase": {
+          "hit@1": 0.333,
+          "hit@3": 0.417,
+          "recall@3": 0.417,
+          "mrr": 0.443,
+          "n": 12
+        },
+        "jargon": {
+          "hit@1": 0.818,
+          "hit@3": 0.909,
+          "recall@3": 0.909,
+          "mrr": 0.864,
+          "n": 11
+        },
+        "hard_negative": {
+          "hit@1": 0.6,
+          "hit@3": 0.8,
+          "recall@3": 0.75,
+          "mrr": 0.731,
+          "n": 10
+        },
+        "out_of_scope": {
+          "hit@1": 1.0,
+          "hit@3": 1.0,
+          "recall@3": 1.0,
+          "mrr": 1.0,
+          "n": 2
+        }
+      },
+      "hit@1_misses": [
+        {
+          "query": "every employee needs their own login",
+          "expected": [
+            "164.312(a)(2)(i)"
+          ],
+          "got_top3": [
+            "164.308(a)(5)(ii)(B)",
+            "164.308(a)(5)(ii)(D)",
+            "164.312(b)"
+          ]
+        },
+        {
+          "query": "can two nurses share one EHR username?",
+          "expected": [
+            "164.312(a)(2)(i)"
+          ],
+          "got_top3": [
+            "164.308(a)(4)(i)",
+            "164.312(d)",
+            "164.308(a)(7)(i)"
+          ]
+        },
+        {
+          "query": "how do clinicians get into the record system if the network is down",
+          "expected": [
+            "164.312(a)(2)(ii)"
+          ],
+          "got_top3": [
+            "164.312(b)",
+            "164.312(a)(1)",
+            "164.308(a)(1)(ii)(D)"
+          ]
+        },
+        {
+          "query": "log users out when they walk away from the computer",
+          "expected": [
+            "164.312(a)(2)(iii)"
+          ],
+          "got_top3": [
+            "164.312(a)(2)(i)",
+            "164.312(a)(1)",
+            "164.312(a)(2)(iii)"
+          ]
+        },
+        {
+          "query": "protect stored patient data so a stolen laptop cannot be read",
+          "expected": [
+            "164.312(a)(2)(iv)"
+          ],
+          "got_top3": [
+            "164.312(c)(1)",
+            "164.308(a)(1)(i)",
+            "164.312(e)(2)(ii)"
+          ]
+        },
+        {
+          "query": "generic shared accounts",
+          "expected": [
+            "164.312(a)(2)(i)"
+          ],
+          "got_top3": [
+            "164.308(a)(3)(ii)(C)",
+            "164.308(a)(5)(ii)(B)",
+            "164.308(a)(5)(ii)(D)"
+          ]
+        },
+        {
+          "query": "AES-256 encryption at rest",
+          "expected": [
+            "164.312(a)(2)(iv)"
+          ],
+          "got_top3": [
+            "164.312(a)(2)(iii)",
+            "164.312(a)(2)(iv)",
+            "164.312(e)(2)(ii)"
+          ]
+        },
+        {
+          "query": "encrypt ePHI sent over email or the internet",
+          "expected": [
+            "164.312(e)(2)(ii)"
+          ],
+          "got_top3": [
+            "164.312(e)(1)",
+            "164.312(e)(2)(ii)",
+            "164.312(a)(2)(iii)"
+          ]
+        },
+        {
+          "query": "TLS for data in transit",
+          "expected": [
+            "164.312(e)(2)(ii)",
+            "164.312(e)(1)"
+          ],
+          "got_top3": [
+            "164.308(a)(7)(ii)(A)",
+            "164.308(a)(7)(ii)(B)",
+            "164.308(a)(7)(ii)(E)"
+          ]
+        },
+        {
+          "query": "do we need multi-factor authentication?",
+          "expected": [
+            "164.312(d)"
+          ],
+          "got_top3": [
+            "164.312(a)(1)",
+            "164.312(d)",
+            "164.308(a)(8)"
+          ]
+        },
+        {
+          "query": "who is in charge of HIPAA security at our company?",
+          "expected": [
+            "164.308(a)(2)"
+          ],
+          "got_top3": [
+            "164.308(a)(6)(i)",
+            "164.308(a)(5)(ii)(A)",
+            "164.308(a)(1)(i)"
+          ]
+        },
+        {
+          "query": "what should an employee do after clicking a phishing link?",
+          "expected": [
+            "164.308(a)(6)(ii)",
+            "164.308(a)(6)(i)"
+          ],
+          "got_top3": [
+            "164.312(b)",
+            "164.312(a)(2)(iii)",
+            "164.308(a)(5)(ii)(A)"
+          ]
+        },
+        {
+          "query": "how often do we need to review our security program?",
+          "expected": [
+            "164.308(a)(8)"
+          ],
+          "got_top3": [
+            "164.308(a)(1)(ii)(D)",
+            "164.312(b)",
+            "164.308(a)(4)(ii)(C)"
+          ]
+        },
+        {
+          "query": "conduct a risk analysis of threats to ePHI",
+          "expected": [
+            "164.308(a)(1)(ii)(A)"
+          ],
+          "got_top3": [
+            "164.312(c)(1)",
+            "164.308(a)(5)(i)",
+            "164.308(a)(6)(i)"
+          ]
+        }
+      ]
+    }
+  },
+  "assessor": {
+    "accuracy": 0.852,
+    "n": 27,
+    "confusion": {
+      "met -> met": 10,
+      "partially_met -> partially_met": 5,
+      "not_met -> not_met": 4,
+      "insufficient_evidence -> insufficient_evidence": 4,
+      "met -> partially_met": 1,
+      "partially_met -> insufficient_evidence": 1,
+      "not_met -> insufficient_evidence": 2
+    },
+    "errors": [
+      {
+        "case_id": "as-005",
+        "control_id": "164.312(a)(2)(i)",
+        "expected": "met",
+        "got": "partially_met",
+        "ok": false
+      },
+      {
+        "case_id": "as-017",
+        "control_id": "164.312(a)(1)",
+        "expected": "partially_met",
+        "got": "insufficient_evidence",
+        "ok": false
+      },
+      {
+        "case_id": "as-018",
+        "control_id": "164.312(a)(1)",
+        "expected": "not_met",
+        "got": "insufficient_evidence",
+        "ok": false
+      },
+      {
+        "case_id": "as-020",
+        "control_id": "164.308(a)(2)",
+        "expected": "not_met",
+        "got": "insufficient_evidence",
+        "ok": false
+      }
+    ]
+  }
+}

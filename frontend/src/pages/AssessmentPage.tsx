@@ -80,9 +80,14 @@ export default function AssessmentPage() {
             <label className="row faint" style={{ gap: 6 }}>
               <input type="checkbox" checked={onlyReview} onChange={(e) => setOnlyReview(e.target.checked)} /> Show only findings routed to review
             </label>
-            {shown.map((f) => (
-              <FindingCard key={f.control_id} assessmentId={a.id} finding={f} onUpdate={setA}
-                onOpenGuidance={setKbChunk} onOpenEvidence={setEvChunk} />
+            {groupByCategory(shown).map(([category, findings]) => (
+              <section key={category} className="stack">
+                <div className="section-label" style={{ margin: "4px 0 -4px" }}>{category} safeguards</div>
+                {findings.map((f) => (
+                  <FindingCard key={f.control_id} assessmentId={a.id} finding={f} onUpdate={setA}
+                    onOpenGuidance={setKbChunk} onOpenEvidence={setEvChunk} />
+                ))}
+              </section>
             ))}
           </div>
         )}
@@ -324,6 +329,15 @@ function Trace({ a }: { a: Assessment }) {
       </div>
     </div>
   );
+}
+
+function groupByCategory(findings: Finding[]): [string, Finding[]][] {
+  const groups = new Map<string, Finding[]>();
+  for (const f of findings) {
+    const key = f.safeguard_category ?? (f.control_id.startsWith("164.308") ? "Administrative" : "Technical");
+    groups.set(key, [...(groups.get(key) ?? []), f]);
+  }
+  return [...groups.entries()];
 }
 
 function localStorageGet(key: string): string {

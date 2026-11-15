@@ -123,7 +123,7 @@ def assess_control(control_id: str, evidence: list[EvidenceChunk], guidance: lis
     return Finding(
         control_id=control.control_id, control_name=control.control_name, citation=control.citation,
         requirement_type=control.requirement_type, requirement_text=control.requirement_text,
-        status=out["status"], basis=None if out["basis"] == "none" else out["basis"],
+        safeguard_category=control.safeguard_category, status=out["status"], basis=None if out["basis"] == "none" else out["basis"],
         rationale=out["rationale"], criteria=results, contradictions=[cite(c) for c in out["contradictions"]],
         gaps=out["gaps"], remediation=out["remediation"], guidance=guidance, assessor="llm",
         confidence=out["confidence"],

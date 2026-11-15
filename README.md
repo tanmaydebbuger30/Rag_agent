@@ -10,10 +10,18 @@ It does **not** make legal determinations of compliance.
 first load after a quiet period can take up to a minute). Click *New assessment*
 and run the fictional sample clinic.
 
-**V1 scope:** HIPAA Security Rule, Access Control, 45 CFR § 164.312(a): the
-standard and its four implementation specifications (unique user
-identification, emergency access procedure, automatic logoff, encryption and
-decryption).
+**V1 scope:** nine HIPAA Security Rule requirements.
+
+| Safeguard | Requirement | Citation |
+|---|---|---|
+| Technical | Access Control, with unique user identification, emergency access procedure, automatic logoff, encryption and decryption | 45 CFR § 164.312(a) |
+| Administrative | Assigned Security Responsibility (a named security official) | § 164.308(a)(2) |
+| Administrative | Security Incident Procedures, with Response and Reporting | § 164.308(a)(6) |
+| Administrative | Evaluation (periodic and change-triggered security evaluations) | § 164.308(a)(8) |
+
+The administrative three were chosen because they are steps on common HIPAA
+compliance checklists (appoint a security officer, establish incident
+reporting, review the program regularly) that written policies can evidence.
 
 ## What it does
 
@@ -36,11 +44,11 @@ how hybrid retrieval ranks the regulation and guidance for any question.
 ## Architecture
 
 ```text
-data/raw/regulatory/                       eCFR XML · HHS Security Series #4 PDF · NIST SP 800-66r2 PDF
+data/raw/regulatory/                       eCFR XML · HHS Security Series #4 PDF · NIST SP 800-66r2 PDF (§5.1 + §5.3)
         │  ingestion/ (ecfr_parser, pdf_explore + hhs_chunks, nist_chunks, build_kb)
         ▼
 controls.yaml (reviewed)  ──exact lookup──►  requirement text, citation, required/addressable
-regulatory_chunks.jsonl (57 chunks)  ──►  retrieval/ BM25 + citation pass + alias map (+ optional dense) → RRF
+regulatory_chunks.jsonl (132 chunks)  ──►  retrieval/ BM25 + citation pass + alias map (+ optional dense) → RRF
 
 uploads ──► ingestion/evidence.py ──► evidence chunks ──► assessment/workflow.py (LangGraph)
 
@@ -61,9 +69,10 @@ Key design decisions:
 - **Structure-aware chunking.** One chunk per legal paragraph, per HHS heading
   section, and per NIST "Key Activity" table row. Guidance is linked to
   controls by citation, not by name (the HHS PDF misspells "ENCRYTION").
-- **Distractors on purpose.** All of § 164.312 is indexed, so "encryption" in
-  transmission security and "MFA" under person or entity authentication are
-  real hard negatives in the evaluation.
+- **Distractors on purpose.** All of § 164.308 and § 164.312 is indexed, so
+  "encryption" in transmission security, "MFA" under person or entity
+  authentication and "risk analysis" under security management are real hard
+  negatives in the evaluation.
 - **Code controls the flow.** The graph, not a model, decides which controls
   exist and what goes to review. The optional LLM only fills in one schema per
   control, and its quotes are checked before anyone sees them.
@@ -82,14 +91,16 @@ that file):
 
 | | Metric | Value |
 |---|---|---|
-| Retrieval, 38 queries, full config | control Hit@1 / Hit@3 / MRR | 0.737 / 0.842 / 0.816 |
-| Retrieval, paraphrase queries only (9) | Hit@1 | 0.444 |
-| Rule-based assessor, 18 cases | status accuracy | 0.833 (in-sample, see below) |
+| Retrieval, 50 queries, full config | control Hit@1 / Hit@3 / MRR | 0.72 / 0.80 / 0.783 |
+| Retrieval, paraphrase queries only (12) | Hit@1 | 0.333 |
+| Rule-based assessor, 27 cases | status accuracy | 0.852 (see below) |
 
 **Read these numbers with their caveats.** Both datasets are small drafts
 (`label_status: draft_unreviewed`) written by the same author as the alias map
 and criteria patterns. The assessor patterns were corrected after a first run on
-the same 18 cases (0.667 before), so 0.833 is in-sample. Treat them as a
+the first 18 cases (0.667 before), so those are in-sample; the 9 cases added
+with the administrative controls were scored once, untuned (8 of 9 correct).
+Treat all of them as a
 regression baseline until an independent reviewer relabels the data. Dense
 retrieval and the Claude assessor have not been evaluated.
 
@@ -168,8 +179,10 @@ frontend/                   React + TypeScript UI
   no pattern for. That is why everything short of "met" is reviewed.
 - The assessment criteria are this project's reading of HHS and NIST guidance,
   not an official checklist, and need review by a compliance professional.
-- V1 assesses Access Control only. Other standards are retrievable but never
-  assessed.
+- V1 assesses nine requirements. The other § 164.308 and § 164.312 standards
+  are retrievable but never assessed; physical safeguards (§ 164.310) are not
+  ingested. The HHS paper in the repo covers technical safeguards only, so the
+  administrative controls rely on NIST guidance.
 - Single-node storage (SQLite) and no authentication: a demo deployment, not a
   multi-tenant service.
 - Sources: 45 CFR Part 164 Subpart C (eCFR), HHS HIPAA Security Series #4

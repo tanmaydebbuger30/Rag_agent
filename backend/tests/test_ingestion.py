@@ -7,7 +7,8 @@ from backend.app.ingestion.build_kb import build_all, ecfr_chunks
 from backend.app.ingestion.hhs_chunks import extract_citation, load_hhs_chunks
 from backend.app.ingestion.nist_chunks import load_nist_chunks
 
-IN_SCOPE = ["164.312(a)(1)", "164.312(a)(2)(i)", "164.312(a)(2)(ii)", "164.312(a)(2)(iii)", "164.312(a)(2)(iv)"]
+ACCESS_CONTROL = ["164.312(a)(1)", "164.312(a)(2)(i)", "164.312(a)(2)(ii)", "164.312(a)(2)(iii)", "164.312(a)(2)(iv)"]
+ADMINISTRATIVE = ["164.308(a)(2)", "164.308(a)(6)(i)", "164.308(a)(6)(ii)", "164.308(a)(8)"]
 
 
 @lru_cache
@@ -29,7 +30,7 @@ def test_hhs_sections_map_to_controls_by_citation():
     chunks = hhs()
     assert len(chunks) == 18
     by_control = {c.primary_control_id: c for c in chunks if c.primary_control_id}
-    for cid in IN_SCOPE:
+    for cid in ACCESS_CONTROL:
         assert by_control[cid].in_scope_v1
     # the source typo "ENCRYTION" does not break the link, because we link by citation
     assert "ENCRYTION" in by_control["164.312(a)(2)(iv)"].heading
@@ -57,7 +58,7 @@ def test_hhs_requirement_type_matches_catalog():
 
 def test_nist_rows_are_complete_and_tagged():
     chunks = nist()
-    assert len(chunks) == 27
+    assert len(chunks) == 73            # §5.1 administrative (46 rows) + §5.3 technical (27 rows)
     rows = {c.chunk_id: c for c in chunks}
     # row 8 covers two addressable specs and continues onto the next page
     row8 = rows["nist-5.3.1-08"]
@@ -67,6 +68,11 @@ def test_nist_rows_are_complete_and_tagged():
     assert rows["nist-5.3.1-03"].control_ids == ["164.312(a)(2)(i)"]
     assert rows["nist-5.3.1-01"].control_ids == ["164.312(a)(1)"]
     assert rows["nist-5.3.4-01"].control_ids == ["164.312(d)"] and not rows["nist-5.3.4-01"].in_scope_v1
+    # administrative rows: outline "164.308(a)(6)" resolves to the standard (a)(6)(i); spec rows are tagged
+    assert rows["nist-5.1.6-01"].control_ids == ["164.308(a)(6)(i)"]
+    assert rows["nist-5.1.6-03"].control_ids == ["164.308(a)(6)(ii)"]
+    assert rows["nist-5.1.1-02"].control_ids == ["164.308(a)(1)(ii)(A)"] and not rows["nist-5.1.1-02"].in_scope_v1
+    assert "Assessment 32" not in rows["nist-5.1.1-02"].heading
 
 
 def test_nist_footnote_markers_removed():
@@ -78,9 +84,11 @@ def test_nist_footnote_markers_removed():
 def test_kb_ids_unique_and_every_control_has_regulation_and_guidance():
     chunks = build_all()
     assert len({c.chunk_id for c in chunks}) == len(chunks)
-    for cid in IN_SCOPE:
+    for cid in ACCESS_CONTROL + ADMINISTRATIVE:
         sources = {c.authority_level for c in chunks if cid in c.control_ids}
-        assert sources == {"regulation", "official_guidance", "supporting_guidance"}, cid
+        assert {"regulation", "supporting_guidance"} <= sources, cid
+    for cid in ACCESS_CONTROL:          # the HHS paper in the repo covers technical safeguards only
+        assert "official_guidance" in {c.authority_level for c in chunks if cid in c.control_ids}, cid
 
 
 def test_ecfr_chunks_are_verbatim_catalog_text():

@@ -29,8 +29,10 @@ def test_evidence_parser_keeps_headings_and_ids():
 def test_sample_clinic_statuses():
     out = workflow.run_assessment(sample_chunks(), assessor="rules")
     status = {f["control_id"]: f["status"] for f in out["findings"]}
-    assert status == {"164.312(a)(1)": "met", UI: "met", EA: "partially_met", LO: "met", EN: "not_met"}
-    assert out["review_queue"] == [EA, EN]
+    assert status == {"164.312(a)(1)": "met", UI: "met", EA: "partially_met", LO: "met", EN: "not_met",
+                      "164.308(a)(2)": "met", "164.308(a)(6)(i)": "met",
+                      "164.308(a)(6)(ii)": "partially_met", "164.308(a)(8)": "partially_met"}
+    assert out["review_queue"] == [EA, EN, "164.308(a)(6)(ii)", "164.308(a)(8)"]
     assert [t["node"] for t in out["trace"]] == ["plan", "retrieve", "assess", "verify", "route", "flag_for_review", "report"]
 
 
@@ -39,7 +41,14 @@ def test_all_met_skips_review_node():
             "Every user has a unique user ID. Shared accounts are prohibited. Audit logs record the user. "
             "A break-glass account exists; only the on-call admin is authorized to enable it; each use is logged and reviewed. "
             "Workstations lock automatically after 15 minutes of inactivity. "
-            "Laptops use BitLocker full-disk encryption. Key management: keys are stored in the key vault.")
+            "Laptops use BitLocker full-disk encryption. Key management: keys are stored in the key vault. "
+            "The IT Manager is designated as the HIPAA Security Officer. The Security Officer is responsible for "
+            "developing and implementing security policies. Staff can contact the Security Officer at extension 9. "
+            "This is our incident response policy. A security incident means any attempted or successful "
+            "unauthorized access. The Security Officer leads the incident response. Staff must report suspected "
+            "incidents within 1 hour. IT will contain the incident. All incidents are logged with their outcome. "
+            "We perform an annual security evaluation. Significant operational changes trigger an evaluation. "
+            "Evaluation findings are documented with a remediation plan.")
     out = workflow.run_assessment(chunks_of(text), assessor="rules")
     assert out["review_queue"] == []
     assert "flag_for_review" not in [t["node"] for t in out["trace"]]
@@ -56,6 +65,12 @@ def test_addressable_documented_alternative():
     f = rules.assess_control(LO, chunks_of(text), [])
     assert (f.status, f.basis) == ("met", "documented_alternative")
     assert f.needs_review
+
+
+def test_quarterly_access_review_is_not_a_security_evaluation():
+    """Regression: the periodic-evaluation pattern used to match an access review."""
+    f = rules.assess_control("164.308(a)(8)", chunks_of("Managers complete a quarterly access review."), [])
+    assert f.status == "insufficient_evidence"
 
 
 def test_no_evidence_is_insufficient_not_failed():

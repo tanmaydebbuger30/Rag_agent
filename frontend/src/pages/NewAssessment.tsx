@@ -64,7 +64,11 @@ export default function NewAssessment() {
       <div className="page-head">
         <div>
           <h1>New assessment</h1>
-          <p>Scope: HIPAA Security Rule, Access Control, 45 CFR § 164.312(a): the standard and its four implementation specifications.</p>
+          <p>
+            Scope: HIPAA Security Rule. Technical: Access Control, § 164.312(a), with its four implementation
+            specifications. Administrative: Assigned Security Responsibility § 164.308(a)(2), Security Incident
+            Procedures § 164.308(a)(6), Evaluation § 164.308(a)(8).
+          </p>
         </div>
       </div>
 
@@ -82,7 +86,7 @@ export default function NewAssessment() {
               <span>
                 <strong>Include the fictional sample evidence</strong>
                 <span className="faint" style={{ display: "block" }}>
-                  Three short policy documents for an invented clinic, written to show met, partially met and not met
+                  Four short policy documents for an invented clinic, written to show met, partially met and not met
                   results.
                 </span>
                 {sample && (

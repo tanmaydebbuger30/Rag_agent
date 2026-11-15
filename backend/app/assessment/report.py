@@ -16,11 +16,11 @@ def _status(f: dict) -> str:
 
 def render_markdown(a: dict) -> str:
     lines = [
-        f"# HIPAA Access Control Readiness Report: {a['org_name']}",
+        f"# HIPAA Security Rule Readiness Report: {a['org_name']}",
         "",
         f"- Assessment ID: `{a['id']}`",
         f"- Created: {a['created_at']}",
-        f"- Scope: 45 CFR § 164.312(a) Access Control (standard and four implementation specifications)",
+        "- Scope: Access Control (45 CFR § 164.312(a), standard and four implementation specifications) plus three administrative standards: Assigned Security Responsibility (§ 164.308(a)(2)), Security Incident Procedures (§ 164.308(a)(6)) and Evaluation (§ 164.308(a)(8))",
         f"- Assessor: {a['assessor']}",
         f"- Evidence: {', '.join(d['filename'] for d in a['documents'])}",
         f"- Review status: {a['review_status']}",
@@ -29,11 +29,12 @@ def render_markdown(a: dict) -> str:
         "",
         "## Summary",
         "",
-        "| Control | Requirement | Type | Status |",
-        "|---|---|---|---|",
+        "| Control | Requirement | Safeguard | Type | Status |",
+        "|---|---|---|---|---|",
     ]
     for f in a["findings"]:
-        lines.append(f"| {f['control_id']} | {f['control_name']} | {f['requirement_type']} | {_status(f)} |")
+        lines.append(f"| {f['control_id']} | {f['control_name']} | {f.get('safeguard_category') or '-'} "
+                     f"| {f['requirement_type']} | {_status(f)} |")
 
     for f in a["findings"]:
         lines += ["", f"## {f['citation']} {f['control_name']}", "",

@@ -11,15 +11,15 @@ from backend.app.ingestion.hhs_chunks import load_hhs_chunks
 from backend.app.ingestion.nist_chunks import load_nist_chunks
 from backend.app.schemas.chunks import RegulatoryChunk
 
-ECFR_SOURCE = "45 CFR § 164.312 (eCFR)"
+SECTION_TITLES = {"164.308": "Administrative safeguards", "164.312": "Technical safeguards"}
 
 
 def ecfr_chunks():
     """One chunk per standard / implementation specification: the legal atoms."""
-    controls = {c.control_id: c for c in parse_controls()}
+    controls = {c.control_id: c for c in parse_controls("164.312") + parse_controls("164.308")}
     chunks = []
     for c in controls.values():
-        path = ["HIPAA Security Rule", "45 CFR 164.312 Technical safeguards"]
+        path = ["HIPAA Security Rule", f"45 CFR {c.section} {SECTION_TITLES[c.section]}"]
         if c.parent_id:
             path.append(f"{c.parent_id} {controls[c.parent_id].control_name}")
         label = f"{c.control_id} {c.control_name} ({c.requirement_type.capitalize()})"
@@ -27,7 +27,7 @@ def ecfr_chunks():
         chunks.append(RegulatoryChunk(
             chunk_id=f"ecfr-{c.control_id}",
             doc_id="ecfr-45-164-subpartC",
-            source=ECFR_SOURCE,
+            source=f"45 CFR § {c.section} (eCFR)",
             authority_level="regulation",
             heading=label,
             heading_path=path,
@@ -65,7 +65,7 @@ def main():
     print(f"{len(chunks)} chunks -> {REGULATORY_CHUNKS}")
     for doc_id, n in by_source.items():
         print(f"  {doc_id:<24} {n}")
-    print(f"  in scope (Access Control): {sum(c.in_scope_v1 for c in chunks)}")
+    print(f"  in scope: {sum(c.in_scope_v1 for c in chunks)}")
 
 
 if __name__ == "__main__":

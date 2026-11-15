@@ -9,6 +9,8 @@ const EXAMPLES = [
   "do we need MFA?",
   "164.312(a)(2)(i)",
   "audit log retention",
+  "who is our security officer?",
+  "how do staff report a security incident?",
 ];
 
 export default function Search() {
@@ -43,8 +45,8 @@ export default function Search() {
         <div>
           <h1>Knowledge search</h1>
           <p>
-            Hybrid retrieval over the regulation text, HHS guidance and NIST SP 800-66r2 (57 chunks, every
-            § 164.312 standard). Out-of-scope standards are kept on purpose as hard negatives: "encryption" also
+            Hybrid retrieval over the regulation text, HHS guidance and NIST SP 800-66r2 (132 chunks covering
+            every § 164.308 and § 164.312 standard). Out-of-scope standards are kept on purpose as hard negatives: "encryption" also
             appears under transmission security, and "MFA" belongs to person or entity authentication.
           </p>
         </div>
@@ -58,7 +60,7 @@ export default function Search() {
           {EXAMPLES.map((ex) => <button type="button" key={ex} className="btn small" onClick={() => run(ex)}>{ex}</button>)}
         </div>
         <label className="row faint" style={{ gap: 6 }}>
-          <input type="checkbox" checked={inScope} onChange={(e) => setInScope(e.target.checked)} /> Only Access Control (in-scope) passages
+          <input type="checkbox" checked={inScope} onChange={(e) => setInScope(e.target.checked)} /> Only in-scope passages
         </label>
       </form>
       {error && <div className="error">{error}</div>}

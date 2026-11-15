@@ -21,7 +21,7 @@ export default function App() {
       <header className="topbar">
         <div className="topbar-inner">
           <Link to="/" className="brand">
-            <Logo /> ComplianceGuard AI <small>HIPAA Access Control</small>
+            <Logo /> ComplianceGuard AI <small>HIPAA Security Rule</small>
           </Link>
           <nav className="nav">
             <NavLink to="/" end>Assessments</NavLink>

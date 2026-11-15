@@ -17,8 +17,9 @@ export default function Dashboard() {
         <div>
           <h1>Find the gaps before an auditor does</h1>
           <p className="muted">
-            Upload your policies and procedures. ComplianceGuard checks them against the HIPAA Security Rule Access Control
-            standard, 45 CFR § 164.312(a), and its four implementation specifications. Every finding quotes your evidence
+            Upload your policies and procedures. ComplianceGuard checks them against nine HIPAA Security Rule
+            requirements: Access Control (45 CFR § 164.312(a)) and the security official, incident procedures and
+            evaluation standards of § 164.308. Every finding quotes your evidence
             and the guidance behind it, and uncertain findings go to a human reviewer.
           </p>
           <div className="row">

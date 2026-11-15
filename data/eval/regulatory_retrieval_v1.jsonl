@@ -36,3 +36,15 @@
 {"query_id": "reg-036", "query": "checksums to detect that data was modified", "query_type": "hard_negative", "expected_control_ids": ["164.312(c)(2)", "164.312(e)(2)(i)"], "split": "test", "label_status": "draft_unreviewed"}
 {"query_id": "reg-037", "query": "audit log retention", "query_type": "out_of_scope", "expected_control_ids": ["164.312(b)"], "split": "dev", "label_status": "draft_unreviewed"}
 {"query_id": "reg-038", "query": "guarding against unauthorized access to ePHI transmitted over a network", "query_type": "out_of_scope", "expected_control_ids": ["164.312(e)(1)"], "split": "dev", "label_status": "draft_unreviewed"}
+{"query_id": "reg-039", "query": "164.308(a)(2)", "query_type": "citation", "expected_control_ids": ["164.308(a)(2)"], "split": "dev", "label_status": "draft_unreviewed"}
+{"query_id": "reg-040", "query": "164.308(a)(6)(ii)", "query_type": "citation", "expected_control_ids": ["164.308(a)(6)(ii)"], "split": "test", "label_status": "draft_unreviewed"}
+{"query_id": "reg-041", "query": "identify the security official responsible for security policies", "query_type": "verbatim", "expected_control_ids": ["164.308(a)(2)"], "split": "dev", "label_status": "draft_unreviewed"}
+{"query_id": "reg-042", "query": "perform a periodic technical and nontechnical evaluation", "query_type": "verbatim", "expected_control_ids": ["164.308(a)(8)"], "split": "dev", "label_status": "draft_unreviewed"}
+{"query_id": "reg-043", "query": "who is in charge of HIPAA security at our company?", "query_type": "paraphrase", "expected_control_ids": ["164.308(a)(2)"], "split": "dev", "label_status": "draft_unreviewed"}
+{"query_id": "reg-044", "query": "what should an employee do after clicking a phishing link?", "query_type": "paraphrase", "expected_control_ids": ["164.308(a)(6)(ii)", "164.308(a)(6)(i)"], "split": "test", "label_status": "draft_unreviewed"}
+{"query_id": "reg-045", "query": "how often do we need to review our security program?", "query_type": "paraphrase", "expected_control_ids": ["164.308(a)(8)"], "split": "dev", "label_status": "draft_unreviewed"}
+{"query_id": "reg-046", "query": "incident response plan", "query_type": "jargon", "expected_control_ids": ["164.308(a)(6)(i)", "164.308(a)(6)(ii)"], "split": "dev", "label_status": "draft_unreviewed"}
+{"query_id": "reg-047", "query": "CISO responsibilities", "query_type": "jargon", "expected_control_ids": ["164.308(a)(2)"], "split": "dev", "label_status": "draft_unreviewed"}
+{"query_id": "reg-048", "query": "annual HIPAA security assessment", "query_type": "jargon", "expected_control_ids": ["164.308(a)(8)"], "split": "test", "label_status": "draft_unreviewed"}
+{"query_id": "reg-049", "query": "conduct a risk analysis of threats to ePHI", "query_type": "hard_negative", "expected_control_ids": ["164.308(a)(1)(ii)(A)"], "split": "dev", "label_status": "draft_unreviewed"}
+{"query_id": "reg-050", "query": "security awareness training for the workforce", "query_type": "hard_negative", "expected_control_ids": ["164.308(a)(5)(i)"], "split": "dev", "label_status": "draft_unreviewed"}
